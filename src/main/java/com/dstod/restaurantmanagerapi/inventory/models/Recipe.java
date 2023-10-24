@@ -1,6 +1,6 @@
-package com.dstod.restaurantmanagerapi.models;
+package com.dstod.restaurantmanagerapi.inventory.models;
 
-import com.dstod.restaurantmanagerapi.models.enums.RecipeCategory;
+import com.dstod.restaurantmanagerapi.inventory.models.enums.RecipeCategory;
 import jakarta.persistence.*;
 
 @Entity

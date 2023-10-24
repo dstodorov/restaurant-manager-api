@@ -1,4 +1,4 @@
-package com.dstod.restaurantmanagerapi.models.dtos;
+package com.dstod.restaurantmanagerapi.inventory.models.dtos;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package com.dstod.restaurantmanagerapi.models;
+package com.dstod.restaurantmanagerapi.inventory.models;
 
 import jakarta.persistence.*;
 

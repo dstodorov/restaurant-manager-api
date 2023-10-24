@@ -1,4 +1,4 @@
-package com.dstod.restaurantmanagerapi.models;
+package com.dstod.restaurantmanagerapi.inventory.models;
 
 public class ErrorMessage {
     private String field;

@@ -1,4 +1,4 @@
-package com.dstod.restaurantmanagerapi.models.dtos;
+package com.dstod.restaurantmanagerapi.inventory.models.dtos;
 
 import java.util.List;
 
