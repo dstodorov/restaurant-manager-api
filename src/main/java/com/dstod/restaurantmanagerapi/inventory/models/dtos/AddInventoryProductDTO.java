@@ -24,4 +24,5 @@ public record AddInventoryProductDTO(
         @NotNull
         LocalDate expiryDate
 ) {
+
 }

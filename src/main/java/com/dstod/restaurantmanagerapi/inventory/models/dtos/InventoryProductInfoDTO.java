@@ -12,4 +12,7 @@ public record InventoryProductInfoDTO(
         LocalDate expiryDate,
         Boolean wasted
 ) {
+    public InventoryProductInfoDTO {
+
+    }
 }
