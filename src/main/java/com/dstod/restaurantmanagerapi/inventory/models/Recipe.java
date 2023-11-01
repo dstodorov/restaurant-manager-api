@@ -13,15 +13,19 @@ public class Recipe {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
+    private String preparationMethod;
+
     @Enumerated(EnumType.STRING)
     private RecipeCategory category;
 
     public Recipe() {
     }
 
-    public Recipe(Long id, String name, RecipeCategory category) {
+    public Recipe(Long id, String name, String preparationMethod, RecipeCategory category) {
         this.id = id;
         this.name = name;
+        this.preparationMethod = preparationMethod;
         this.category = category;
     }
 
@@ -40,6 +44,15 @@ public class Recipe {
 
     public Recipe setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getPreparationMethod() {
+        return preparationMethod;
+    }
+
+    public Recipe setPreparationMethod(String preparationMethod) {
+        this.preparationMethod = preparationMethod;
         return this;
     }
 

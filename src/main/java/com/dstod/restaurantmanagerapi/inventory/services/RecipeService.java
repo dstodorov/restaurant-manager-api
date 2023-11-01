@@ -29,6 +29,7 @@ public class RecipeService {
         Recipe recipe = new Recipe(
                 0L,
                 recipeDTO.name(),
+                recipeDTO.preparationMethod(),
                 RecipeCategory.valueOf(recipeDTO.category())
         );
 
@@ -52,6 +53,7 @@ public class RecipeService {
 
         // Saving changes
         recipeById.setName(recipeDTO.name());
+        recipeById.setPreparationMethod(recipeDTO.preparationMethod());
         recipeById.setCategory(RecipeCategory.valueOf(recipeDTO.category()));
 
         this.recipeRepository.save(recipeById);
@@ -59,6 +61,7 @@ public class RecipeService {
         return new RecipeDTO(
                 id,
                 recipeDTO.name(),
+                recipeDTO.preparationMethod(),
                 recipeDTO.category()
         );
     }
@@ -83,6 +86,7 @@ public class RecipeService {
         return new RecipeDTO(
                 recipe.getId(),
                 recipe.getName(),
+                recipe.getPreparationMethod(),
                 recipe.getCategory().name()
         );
     }

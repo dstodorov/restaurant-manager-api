@@ -7,16 +7,15 @@ import com.dstod.restaurantmanagerapi.inventory.models.CheckoutStatus;
 import com.dstod.restaurantmanagerapi.inventory.models.Inventory;
 import com.dstod.restaurantmanagerapi.inventory.models.Product;
 import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.AddInventoryProductDTO;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductInfoDTO;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierInfoDTO;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.*;
 import com.dstod.restaurantmanagerapi.inventory.repositories.InventoryRepository;
 import com.dstod.restaurantmanagerapi.inventory.repositories.ProductRepository;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InventoryService {
@@ -41,7 +40,7 @@ public class InventoryService {
 
         LocalDate orderDate = LocalDate.now();
 
-        Inventory inventoryProduct = new Inventory (
+        Inventory inventoryProduct = new Inventory(
                 0,
                 inventoryProductDTO.orderQuantity(),
                 inventoryProductDTO.orderQuantity(),
@@ -61,6 +60,11 @@ public class InventoryService {
                 .findById(id)
                 .map(this::map)
                 .orElseThrow(() -> new InventoryProductNotFoundException(id.toString()));
+    }
+
+    public Optional<List<InventoryProductInfoDTO>> getInventoryProducts() {
+        return Optional.of(this.inventoryRepository
+                .findAll().stream().map(this::map).toList());
     }
 
     private InventoryProductInfoDTO map(Inventory inventoryProduct) {
@@ -88,6 +92,8 @@ public class InventoryService {
                 inventoryProduct.getWasted()
         );
     }
+
+
 
     public CheckoutStatus productsCheckout(Double recipeId, Integer numberOfDishes) {
         // Check quantities

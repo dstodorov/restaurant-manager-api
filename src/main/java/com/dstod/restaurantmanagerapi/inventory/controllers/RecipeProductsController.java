@@ -23,7 +23,6 @@ public class RecipeProductsController {
 
         Long recipeIdResponse = this.recipeProductsService.addRecipeProducts(recipeId, recipeProductsDTO);
 
-
         if (recipeId == -1L) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }

@@ -2,11 +2,15 @@ package com.dstod.restaurantmanagerapi.inventory.controllers;
 
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.AddInventoryProductDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductInfoDTO;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductsDTO;
 import com.dstod.restaurantmanagerapi.inventory.services.InventoryService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/inventory")
@@ -37,5 +41,10 @@ public class InventoryController {
         InventoryProductInfoDTO inventoryProductInfo = this.inventoryService.getInventoryProductInfo(id);
 
         return ResponseEntity.ok(inventoryProductInfo);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<InventoryProductInfoDTO>> getInventoryProducts() {
+        return this.inventoryService.getInventoryProducts().map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }
