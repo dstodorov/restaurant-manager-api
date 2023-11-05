@@ -3,17 +3,15 @@ package com.dstod.restaurantmanagerapi.inventory.services;
 import com.dstod.restaurantmanagerapi.core.exceptions.inventory.InventoryProductNotFoundException;
 import com.dstod.restaurantmanagerapi.core.exceptions.inventory.ProductNotFoundException;
 import com.dstod.restaurantmanagerapi.core.exceptions.inventory.SupplierNotFoundException;
-import com.dstod.restaurantmanagerapi.inventory.models.CheckoutStatus;
-import com.dstod.restaurantmanagerapi.inventory.models.Inventory;
-import com.dstod.restaurantmanagerapi.inventory.models.Product;
-import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
+import com.dstod.restaurantmanagerapi.inventory.models.*;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.*;
-import com.dstod.restaurantmanagerapi.inventory.repositories.InventoryRepository;
-import com.dstod.restaurantmanagerapi.inventory.repositories.ProductRepository;
-import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
+import com.dstod.restaurantmanagerapi.inventory.repositories.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +20,15 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
+    private final RecipeRepository recipeRepository;
+    private final RecipeProductRepository recipeProductRepository;
 
-    public InventoryService(InventoryRepository inventoryRepository, ProductRepository productRepository, SupplierRepository supplierRepository) {
+    public InventoryService(InventoryRepository inventoryRepository, ProductRepository productRepository, SupplierRepository supplierRepository, RecipeRepository recipeRepository, RecipeProductRepository recipeProductRepository) {
         this.inventoryRepository = inventoryRepository;
         this.productRepository = productRepository;
         this.supplierRepository = supplierRepository;
+        this.recipeRepository = recipeRepository;
+        this.recipeProductRepository = recipeProductRepository;
     }
 
     public Long addToInventory(AddInventoryProductDTO inventoryProductDTO) {
@@ -94,13 +96,55 @@ public class InventoryService {
     }
 
 
-
-    public CheckoutStatus productsCheckout(Double recipeId, Integer numberOfDishes) {
+    public CheckoutStatus checkoutRecipeProducts(long recipeId, Integer numberOfDishes) {
         // Check quantities
         // Check wasted for products
         // Reduce quantities
         // Return CheckoutStatus
 
-        return null;
+        Optional<Recipe> recipeById = this.recipeRepository.findById(recipeId);
+        ArrayList<String> messages = new ArrayList<>();
+
+        // If recipe not exist return unsuccessful status
+        if (recipeById.isEmpty()) {
+            messages.add(String.format("Recipe with id %d, not found!", recipeId));
+
+            return new CheckoutStatus(
+                    false,
+                    HttpStatus.NOT_FOUND,
+                    messages
+            );
+        }
+
+        // Retrieve all needed products for current recipe
+        List<RecipeProduct> recipeProducts = this.recipeProductRepository.findRecipeProductByRecipe(recipeById.get());
+
+        recipeProducts.forEach(recipeProduct -> {
+            Optional<Inventory> inventoryProduct = this.inventoryRepository.findByProduct(recipeProduct.getProduct());
+
+            if (inventoryProduct.isEmpty()) {
+                messages.add(String.format("Product with %d is missing in the inventory!", recipeProduct.getProduct().getId()));
+            }
+
+            if (inventoryProduct.isPresent()) {
+                if (inventoryProduct.get().getWasted()) {
+                    messages.add(String.format("Product with id %d (%s) is wasted", recipeProduct.getProduct().getId(), recipeProduct.getProduct().getName()));
+                }
+                if (inventoryProduct.get().getCurrentQuantity() < recipeProduct.getQuantity() * numberOfDishes) {
+                    messages.add(String.format("Product with id %d (%s) is out of stock", recipeProduct.getProduct().getId(), recipeProduct.getProduct().getName()));
+                }
+
+                if (messages.isEmpty()) {
+                    inventoryProduct.get().setCurrentQuantity(inventoryProduct.get().getCurrentQuantity() - recipeProduct.getQuantity() * numberOfDishes);
+                    inventoryRepository.save(inventoryProduct.get());
+                }
+            }
+        });
+
+        if (messages.isEmpty()) {
+            return new CheckoutStatus(true, HttpStatus.OK, messages);
+        }
+
+        return new CheckoutStatus(false, HttpStatus.NOT_MODIFIED, messages);
     }
 }
