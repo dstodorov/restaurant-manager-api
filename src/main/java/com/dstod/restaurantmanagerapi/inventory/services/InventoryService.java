@@ -3,15 +3,16 @@ package com.dstod.restaurantmanagerapi.inventory.services;
 import com.dstod.restaurantmanagerapi.core.exceptions.inventory.InventoryProductNotFoundException;
 import com.dstod.restaurantmanagerapi.core.exceptions.inventory.ProductNotFoundException;
 import com.dstod.restaurantmanagerapi.core.exceptions.inventory.SupplierNotFoundException;
+import com.dstod.restaurantmanagerapi.core.messages.RmMessages;
 import com.dstod.restaurantmanagerapi.inventory.models.*;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.*;
 import com.dstod.restaurantmanagerapi.inventory.repositories.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,54 +98,69 @@ public class InventoryService {
 
 
     public CheckoutStatus checkoutRecipeProducts(long recipeId, Integer numberOfDishes) {
-        // Check quantities
-        // Check wasted for products
-        // Reduce quantities
-        // Return CheckoutStatus
-
         Optional<Recipe> recipeById = this.recipeRepository.findById(recipeId);
-        ArrayList<String> messages = new ArrayList<>();
 
-        // If recipe not exist return unsuccessful status
         if (recipeById.isEmpty()) {
-            messages.add(String.format("Recipe with id %d, not found!", recipeId));
-
-            return new CheckoutStatus(
-                    false,
-                    HttpStatus.NOT_FOUND,
-                    messages
-            );
+            return createCheckoutStatus(false, HttpStatus.NOT_FOUND, String.format(RmMessages.RECIPE_NOT_FOUND, recipeId));
         }
 
-        // Retrieve all needed products for current recipe
-        List<RecipeProduct> recipeProducts = this.recipeProductRepository.findRecipeProductByRecipe(recipeById.get());
+        Recipe recipe = recipeById.get();
+        ArrayList<String> inventoryIssues = new ArrayList<>();
 
-        recipeProducts.forEach(recipeProduct -> {
-            Optional<Inventory> inventoryProduct = this.inventoryRepository.findByProduct(recipeProduct.getProduct());
-
-            if (inventoryProduct.isEmpty()) {
-                messages.add(String.format("Product with %d is missing in the inventory!", recipeProduct.getProduct().getId()));
+        for (RecipeProduct  recipeProduct: recipeProductRepository.findRecipeProductByRecipe(recipe)) {
+            String productAvailabilityIssue = checkProductAvailability(recipeProduct, numberOfDishes);
+            
+            if (!productAvailabilityIssue.isEmpty()) {
+                inventoryIssues.add(productAvailabilityIssue);
             }
-
-            if (inventoryProduct.isPresent()) {
-                if (inventoryProduct.get().getWasted()) {
-                    messages.add(String.format("Product with id %d (%s) is wasted", recipeProduct.getProduct().getId(), recipeProduct.getProduct().getName()));
-                }
-                if (inventoryProduct.get().getCurrentQuantity() < recipeProduct.getQuantity() * numberOfDishes) {
-                    messages.add(String.format("Product with id %d (%s) is out of stock", recipeProduct.getProduct().getId(), recipeProduct.getProduct().getName()));
-                }
-
-                if (messages.isEmpty()) {
-                    inventoryProduct.get().setCurrentQuantity(inventoryProduct.get().getCurrentQuantity() - recipeProduct.getQuantity() * numberOfDishes);
-                    inventoryRepository.save(inventoryProduct.get());
-                }
-            }
-        });
-
-        if (messages.isEmpty()) {
-            return new CheckoutStatus(true, HttpStatus.OK, messages);
         }
 
-        return new CheckoutStatus(false, HttpStatus.NOT_MODIFIED, messages);
+        if (inventoryIssues.isEmpty()) {
+            for (RecipeProduct  recipeProduct: recipeProductRepository.findRecipeProductByRecipe(recipe)) {
+                reduceProductQuantity(recipeProduct, numberOfDishes);
+            }
+
+            return createCheckoutStatus(true, HttpStatus.OK, "");
+        }
+
+        return createCheckoutStatus(false, HttpStatus.NOT_MODIFIED, inventoryIssues.toArray(new String[0]));
+    }
+    
+    private void reduceProductQuantity(RecipeProduct recipeProduct, int numberOfDishes) {
+        Optional<Inventory> inventoryProduct = this.inventoryRepository.findByProduct(recipeProduct.getProduct());
+
+        if (inventoryProduct.isPresent()) {
+            Inventory inventory = inventoryProduct.get();
+            inventory.setCurrentQuantity(inventoryProduct.get().getCurrentQuantity() - recipeProduct.getQuantity() * numberOfDishes);
+            inventoryRepository.save(inventory);
+        }
+    }
+
+    private String checkProductAvailability(RecipeProduct recipeProduct, int numberOfDishes) {
+        Optional<Inventory> inventoryOptional = this.inventoryRepository.findByProduct(recipeProduct.getProduct());
+        Product product = recipeProduct.getProduct();
+
+        if (inventoryOptional.isEmpty()) {
+
+            return String.format(RmMessages.PRODUCT_MISSING, product.getId(), product.getName());
+        }
+
+        Inventory inventory = inventoryOptional.get();
+
+        if (inventory.getWasted()) {
+            return String.format(RmMessages.PRODUCT_WASTED, product.getId(), product.getName());
+        }
+
+        double requiredQuantity = recipeProduct.getQuantity() * numberOfDishes;
+
+        if (inventory.getCurrentQuantity() < requiredQuantity) {
+            return String.format(RmMessages.PRODUCT_OUT_OF_STOCK, product.getId(), product.getName());
+        }
+
+        return "";
+    }
+
+    private CheckoutStatus createCheckoutStatus(boolean success, HttpStatus status, String... messages) {
+        return new CheckoutStatus(success, status, Arrays.asList(messages));
     }
 }
