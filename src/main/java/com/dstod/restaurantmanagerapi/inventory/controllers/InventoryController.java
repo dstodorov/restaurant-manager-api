@@ -53,6 +53,10 @@ public class InventoryController {
     public ResponseEntity<CheckoutStatus> checkoutRecipeProducts(@Valid @RequestBody CheckoutProductsRequestDTO request) {
         CheckoutStatus checkoutStatus = this.inventoryService.checkoutRecipeProducts(request.recipeId(), request.quantity());
 
-        return ResponseEntity.ok(checkoutStatus);
+        if (checkoutStatus.successfulCheckout()) {
+            return ResponseEntity.ok(checkoutStatus);
+        }
+
+        return ResponseEntity.badRequest().body(checkoutStatus);
     }
 }
