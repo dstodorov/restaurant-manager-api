@@ -1,8 +1,8 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.core.exceptions.inventory.InventoryProductNotFoundException;
-import com.dstod.restaurantmanagerapi.core.exceptions.inventory.ProductNotFoundException;
-import com.dstod.restaurantmanagerapi.core.exceptions.inventory.SupplierNotFoundException;
+import com.dstod.restaurantmanagerapi.inventory.exceptions.InventoryProductNotFoundException;
+import com.dstod.restaurantmanagerapi.inventory.exceptions.ProductNotFoundException;
+import com.dstod.restaurantmanagerapi.inventory.exceptions.SupplierNotFoundException;
 import com.dstod.restaurantmanagerapi.core.messages.RmMessages;
 import com.dstod.restaurantmanagerapi.inventory.models.*;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.*;

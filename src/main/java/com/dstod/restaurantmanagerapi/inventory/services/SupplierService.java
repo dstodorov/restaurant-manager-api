@@ -1,7 +1,7 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.core.exceptions.inventory.DuplicatedSupplierException;
-import com.dstod.restaurantmanagerapi.core.exceptions.inventory.SupplierNotFoundException;
+import com.dstod.restaurantmanagerapi.inventory.exceptions.DuplicatedSupplierException;
+import com.dstod.restaurantmanagerapi.inventory.exceptions.SupplierNotFoundException;
 import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;

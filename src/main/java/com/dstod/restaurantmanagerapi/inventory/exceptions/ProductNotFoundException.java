@@ -1,4 +1,4 @@
-package com.dstod.restaurantmanagerapi.core.exceptions.inventory;
+package com.dstod.restaurantmanagerapi.inventory.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

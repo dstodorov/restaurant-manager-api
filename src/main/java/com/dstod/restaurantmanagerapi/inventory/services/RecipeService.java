@@ -1,7 +1,7 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.core.exceptions.inventory.DuplicatedRecipeException;
-import com.dstod.restaurantmanagerapi.core.exceptions.inventory.RecipeNotFoundException;
+import com.dstod.restaurantmanagerapi.inventory.exceptions.DuplicatedRecipeException;
+import com.dstod.restaurantmanagerapi.inventory.exceptions.RecipeNotFoundException;
 import com.dstod.restaurantmanagerapi.inventory.models.Recipe;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.enums.RecipeCategory;
