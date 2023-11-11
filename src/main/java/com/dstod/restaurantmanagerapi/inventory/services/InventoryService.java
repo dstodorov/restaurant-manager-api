@@ -39,7 +39,8 @@ public class InventoryService {
 
         Product product = productRepository
                 .findById(inventoryProductDTO.productId())
-                .orElseThrow(() -> new ProductNotFoundException(inventoryProductDTO.productId().toString()));
+
+                .orElseThrow(() -> new ProductNotFoundException(String.format(RmMessages.PRODUCT_NOT_FOUND, inventoryProductDTO.productId())));
 
         LocalDate orderDate = LocalDate.now();
 

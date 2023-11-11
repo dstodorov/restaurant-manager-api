@@ -18,15 +18,6 @@ public class InventoryUtility {
         );
     }
 
-    public static ProductDTO createValidProductDtoForUpdate() {
-        return new ProductDTO(
-                1L,
-                "Banana_two",
-                "FRUIT",
-                "KG"
-        );
-    }
-
     public static Product createValidProduct() {
         return new Product(
                 1L,
@@ -64,14 +55,5 @@ public class InventoryUtility {
         products.add(product2);
 
         return products;
-    }
-
-    public static ProductDTO createInvalidProductDto() {
-        return new ProductDTO(
-                1L,
-                "Ban",
-                "WRONG_CATEGORY",
-                "WRONG_UNIT"
-        );
     }
 }
