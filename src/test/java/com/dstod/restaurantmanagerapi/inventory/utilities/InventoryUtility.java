@@ -1,7 +1,9 @@
 package com.dstod.restaurantmanagerapi.inventory.utilities;
 
 import com.dstod.restaurantmanagerapi.inventory.models.Product;
+import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.enums.ProductCategory;
 import com.dstod.restaurantmanagerapi.inventory.models.enums.UnitType;
 
@@ -55,5 +57,27 @@ public class InventoryUtility {
         products.add(product2);
 
         return products;
+    }
+
+    public static SupplierDTO createValidSupplierDto() {
+        return new SupplierDTO(
+                1L,
+                "Meat factory",
+                "+359889123456",
+                "meat_factory@gmail.com",
+                "Supplier for all kinds of meat",
+                true
+        );
+    }
+
+    public static Supplier createSupplier() {
+        return new Supplier(
+                1L,
+                "Meat factory",
+                "+359889123456",
+                "meat_factory@gmail.com",
+                "Supplier for all kinds of meat",
+                true
+        );
     }
 }
