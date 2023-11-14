@@ -2,7 +2,6 @@ package com.dstod.restaurantmanagerapi.inventory.services;
 
 import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
-import com.dstod.restaurantmanagerapi.inventory.repositories.ProductRepository;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
 import com.dstod.restaurantmanagerapi.inventory.utilities.InventoryUtility;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.*;
 class SupplierServiceTest {
 
     private final Long validSupplierId = 1L;
+    private final Long invalidSupplierId = -1L;
 
     @Mock
     SupplierRepository supplierRepository;
@@ -67,5 +67,77 @@ class SupplierServiceTest {
         inOrder.verify(supplierRepository, times(1)).findByEmail(supplierDTO.email());
         inOrder.verify(supplierRepository, times(1)).findByPhoneNumber(supplierDTO.phoneNumber());
         inOrder.verify(supplierRepository, times(1)).save(any(Supplier.class));
+    }
+
+    @Test
+    @DisplayName("Create supplier - name duplication")
+    public void createSupplierNameDuplicationShouldFail() {
+
+        // Arrange
+        SupplierDTO supplierDTO = InventoryUtility.createValidSupplierDto();
+        Supplier supplier = InventoryUtility.createSupplier();
+
+        when(supplierRepository.findByName(supplierDTO.name())).thenReturn(Optional.of(supplier));
+
+        // Act
+
+        Long supplierId = supplierService.createSupplier(supplierDTO);
+
+        // Assert
+
+        assertNotNull(supplierId);
+        assertEquals(invalidSupplierId, supplierId);
+
+        // verify
+
+        inOrder.verify(supplierRepository, times(1)).findByName(supplierDTO.name());
+        inOrder.verify(supplierRepository, never()).save(any(Supplier.class));
+
+    }
+
+    @Test
+    @DisplayName("Create supplier - email duplication")
+    public void createSupplierEmailDuplicationShouldFail() {
+        SupplierDTO supplierDTO = InventoryUtility.createValidSupplierDto();
+        Supplier supplier = InventoryUtility.createSupplier();
+
+        when(supplierRepository.findByEmail(supplierDTO.email())).thenReturn(Optional.of(supplier));
+
+        // Act
+
+        Long supplierId = supplierService.createSupplier(supplierDTO);
+
+        // Assert
+
+        assertNotNull(supplierId);
+        assertEquals(invalidSupplierId, supplierId);
+
+        // verify
+
+        inOrder.verify(supplierRepository, times(1)).findByEmail(supplierDTO.email());
+        inOrder.verify(supplierRepository, never()).save(any(Supplier.class));
+    }
+
+    @Test
+    @DisplayName("Create supplier - phone number duplication")
+    public void createSupplierPhoneNumberDuplicationShouldFail() {
+        SupplierDTO supplierDTO = InventoryUtility.createValidSupplierDto();
+        Supplier supplier = InventoryUtility.createSupplier();
+
+        when(supplierRepository.findByPhoneNumber(supplierDTO.phoneNumber())).thenReturn(Optional.of(supplier));
+
+        // Act
+
+        Long supplierId = supplierService.createSupplier(supplierDTO);
+
+        // Assert
+
+        assertNotNull(supplierId);
+        assertEquals(invalidSupplierId, supplierId);
+
+        // verify
+
+        inOrder.verify(supplierRepository, times(1)).findByPhoneNumber(supplierDTO.phoneNumber());
+        inOrder.verify(supplierRepository, never()).save(any(Supplier.class));
     }
 }
