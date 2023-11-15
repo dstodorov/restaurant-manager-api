@@ -1,9 +1,11 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
+import com.dstod.restaurantmanagerapi.inventory.models.Inventory;
 import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
 import com.dstod.restaurantmanagerapi.inventory.utilities.InventoryUtility;
+import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -139,5 +141,51 @@ class SupplierServiceTest {
 
         inOrder.verify(supplierRepository, times(1)).findByPhoneNumber(supplierDTO.phoneNumber());
         inOrder.verify(supplierRepository, never()).save(any(Supplier.class));
+    }
+
+    @Test
+    @DisplayName("Get supplier info return supplier")
+    public void getSupplierInfoReturnSupplier() {
+        // Arrange
+        Supplier supplier = InventoryUtility.createSupplier();
+
+        when(supplierRepository.findById(validSupplierId)).thenReturn(Optional.of(supplier));
+
+        // Act
+        Optional<SupplierDTO> supplierDTO = supplierService.getSupplier(validSupplierId);
+
+        // Assert
+        assertNotNull(supplierDTO);
+        assertEquals(validSupplierId, supplierDTO.get().id());
+
+        // Verify
+        inOrder.verify(supplierRepository, times(1)).findById(validSupplierId);
+    }
+
+    @Test
+    @DisplayName("Update supplier info - Successful")
+    public void updateSupplierInfoSuccessful() {
+        // Arrange
+        Supplier supplier = InventoryUtility.createSupplier();
+        SupplierDTO supplierDTO = InventoryUtility.createValidSupplierDto();
+
+        when(supplierRepository.findById(validSupplierId)).thenReturn(Optional.of(supplier));
+        when(supplierRepository.findByNameOrEmailOrPhoneNumber(validSupplierId, supplierDTO.name(), supplierDTO.email(), supplierDTO.phoneNumber())).thenReturn(Optional.empty());
+        when(supplierRepository.save(any(Supplier.class))).thenReturn(supplier);
+
+        // Act
+        SupplierDTO supplierDTOResponse = this.supplierService.updateSupplier(validSupplierId, supplierDTO);
+
+        // Assert
+        assertNotNull(supplierDTOResponse);
+        assertEquals(supplierDTO.id(), validSupplierId);
+        assertEquals(supplierDTO.name(), supplierDTOResponse.name());
+        assertEquals(supplierDTO.phoneNumber(), supplierDTOResponse.phoneNumber());
+        assertEquals(supplierDTO.active(), supplierDTOResponse.active());
+
+        // Verify
+        inOrder.verify(supplierRepository, times(1)).findById(validSupplierId);
+        inOrder.verify(supplierRepository, times(1)).findByNameOrEmailOrPhoneNumber(validSupplierId, supplierDTO.name(), supplierDTO.email(), supplierDTO.phoneNumber());
+        inOrder.verify(supplierRepository, times(1)).save(supplier);
     }
 }

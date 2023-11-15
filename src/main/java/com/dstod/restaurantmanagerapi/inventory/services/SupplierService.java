@@ -44,14 +44,14 @@ public class SupplierService {
                 .findById(id)
                 .orElseThrow(() -> new SupplierNotFoundException(id.toString()));
 
-        Optional<Supplier> supplierByNameAndEmailAndPhoneNumber = this.supplierRepository
-                .findByNameAndEmailAndPhoneNumber(id,
+        Optional<Supplier> supplierByNameOrEmailOrPhoneNumber = this.supplierRepository
+                .findByNameOrEmailOrPhoneNumber(id,
                         supplierDTO.name(),
                         supplierDTO.email(),
                         supplierDTO.phoneNumber());
 
         // Throw duplication exception if there record with same name/email/phoneNumber
-        if (supplierByNameAndEmailAndPhoneNumber.isPresent()) {
+        if (supplierByNameOrEmailOrPhoneNumber.isPresent()) {
             throw new DuplicatedSupplierException(id.toString());
         }
 
