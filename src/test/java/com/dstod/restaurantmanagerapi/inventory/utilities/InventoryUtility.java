@@ -80,4 +80,27 @@ public class InventoryUtility {
                 true
         );
     }
+
+    public static Supplier createSupplierTwo() {
+        return new Supplier(
+                2L,
+                "Vegetable factory",
+                "+359889123457",
+                "vegetable_factory@gmail.com",
+                "Supplier for all kinds of vegetables",
+                true
+        );
+    }
+
+    public static List<Supplier> getListOfSuppliers() {
+        Supplier supplier1 = createSupplier();
+        Supplier supplier2 = createSupplierTwo();
+
+        List<Supplier> suppliers = new ArrayList<>();
+
+        suppliers.add(supplier1);
+        suppliers.add(supplier2);
+
+        return suppliers;
+    }
 }

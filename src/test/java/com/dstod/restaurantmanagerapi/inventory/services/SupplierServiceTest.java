@@ -3,8 +3,10 @@ package com.dstod.restaurantmanagerapi.inventory.services;
 import com.dstod.restaurantmanagerapi.inventory.exceptions.DuplicatedSupplierException;
 import com.dstod.restaurantmanagerapi.inventory.exceptions.SupplierNotFoundException;
 import com.dstod.restaurantmanagerapi.inventory.models.Inventory;
+import com.dstod.restaurantmanagerapi.inventory.models.Product;
 import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductsDTO;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
 import com.dstod.restaurantmanagerapi.inventory.utilities.InventoryUtility;
@@ -18,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -247,5 +250,34 @@ class SupplierServiceTest {
                 supplierDTO.phoneNumber()
         );
         inOrder.verify(supplierRepository, never()).save(any(Supplier.class));
+    }
+
+    @Test
+    @DisplayName("Get list of suppliers - Successful")
+    public void getListOfSuppliersIsSuccessful() {
+        // Arrange
+        List<Supplier> suppliers = InventoryUtility.getListOfSuppliers();
+        when(supplierRepository.findAll()).thenReturn(suppliers);
+
+        // Act
+        Optional<List<SupplierDTO>> allSuppliers = supplierService.getAllSuppliers();
+
+        // Assert
+        assertNotNull(allSuppliers.get());
+        assertEquals(suppliers.size(), allSuppliers.get().size());
+
+        List<SupplierDTO> supplierDTOS = allSuppliers.get();
+
+        for(int i = 0; i < supplierDTOS.size(); i++) {
+            assertEquals(suppliers.get(i).getId(), supplierDTOS.get(i).id());
+            assertEquals(suppliers.get(i).getName(), supplierDTOS.get(i).name());
+            assertEquals(suppliers.get(i).getEmail(), supplierDTOS.get(i).email());
+            assertEquals(suppliers.get(i).getPhoneNumber(), supplierDTOS.get(i).phoneNumber());
+            assertEquals(suppliers.get(i).getDescription(), supplierDTOS.get(i).description());
+            assertEquals(suppliers.get(i).getActive(), supplierDTOS.get(i).active());
+        }
+
+        // Verify
+        inOrder.verify(supplierRepository, times(1)).findAll();
     }
 }

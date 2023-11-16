@@ -78,9 +78,9 @@ public class SupplierService {
         return Optional.of(this.supplierRepository.findAll().stream().map(this::mapToSupplierDTO).toList());
     }
 
-    public void changeStatus() {
-
-    }
+//    public void changeStatus() {
+//
+//    }
 
     private SupplierDTO mapToSupplierDTO(Supplier supplier) {
 
