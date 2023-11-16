@@ -109,7 +109,6 @@ class ProductServiceTest {
     void getAllProductsShouldReturnListOfProducts() {
 
         // Arrange
-
         List<Product> products = InventoryUtility.getListOfProducts();
         when(productRepository.findAll()).thenReturn(products);
 
@@ -131,7 +130,6 @@ class ProductServiceTest {
 
         // Verify
         inOrder.verify(productRepository, times(1)).findAll();
-
     }
 
     @Test

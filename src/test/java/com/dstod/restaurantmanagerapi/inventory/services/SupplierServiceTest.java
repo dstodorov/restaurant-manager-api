@@ -1,7 +1,10 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
+import com.dstod.restaurantmanagerapi.inventory.exceptions.DuplicatedSupplierException;
+import com.dstod.restaurantmanagerapi.inventory.exceptions.SupplierNotFoundException;
 import com.dstod.restaurantmanagerapi.inventory.models.Inventory;
 import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductsDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
 import com.dstod.restaurantmanagerapi.inventory.utilities.InventoryUtility;
@@ -187,5 +190,62 @@ class SupplierServiceTest {
         inOrder.verify(supplierRepository, times(1)).findById(validSupplierId);
         inOrder.verify(supplierRepository, times(1)).findByNameOrEmailOrPhoneNumber(validSupplierId, supplierDTO.name(), supplierDTO.email(), supplierDTO.phoneNumber());
         inOrder.verify(supplierRepository, times(1)).save(supplier);
+    }
+
+    @Test
+    @DisplayName("Update not existing supplier return exception")
+    public void updateNotExistentProductReturnException() {
+        // Arrange
+        SupplierDTO supplierDTO = InventoryUtility.createValidSupplierDto();
+
+        when(supplierRepository.findById(validSupplierId)).thenThrow(SupplierNotFoundException.class);
+
+        // Act and Assert
+        assertThrows(SupplierNotFoundException.class, () -> {
+            supplierService.updateSupplier(validSupplierId, supplierDTO);
+        });
+
+        // Verify
+
+        inOrder.verify(supplierRepository, times(1)).findById(validSupplierId);
+        inOrder.verify(supplierRepository, never()).findByNameOrEmailOrPhoneNumber(
+                validSupplierId,
+                supplierDTO.name(),
+                supplierDTO.email(),
+                supplierDTO.phoneNumber()
+        );
+        inOrder.verify(supplierRepository, never()).save(any(Supplier.class));
+    }
+    @Test
+    @DisplayName("Update supplier with duplicated details return exception")
+    public void updateSupplierWithDuplicatedDetailsReturnException() {
+
+        // Arrange
+        SupplierDTO supplierDTO = InventoryUtility.createValidSupplierDto();
+        Supplier supplier = InventoryUtility.createSupplier();
+
+        when(supplierRepository.findById(validSupplierId)).thenReturn(Optional.of(supplier));
+        when(supplierRepository.findByNameOrEmailOrPhoneNumber(
+                validSupplierId,
+                supplierDTO.name(),
+                supplierDTO.email(),
+                supplierDTO.phoneNumber()
+        )).thenReturn(Optional.of(supplier));
+
+        // Act and Assert
+        assertThrows(DuplicatedSupplierException.class, () -> {
+            supplierService.updateSupplier(validSupplierId, supplierDTO);
+        });
+
+        // Verify
+
+        inOrder.verify(supplierRepository, times(1)).findById(validSupplierId);
+        inOrder.verify(supplierRepository, times(1)).findByNameOrEmailOrPhoneNumber(
+                validSupplierId,
+                supplierDTO.name(),
+                supplierDTO.email(),
+                supplierDTO.phoneNumber()
+        );
+        inOrder.verify(supplierRepository, never()).save(any(Supplier.class));
     }
 }
