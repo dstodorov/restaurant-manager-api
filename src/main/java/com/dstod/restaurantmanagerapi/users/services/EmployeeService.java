@@ -1,15 +1,25 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
-import com.dstod.restaurantmanagerapi.users.repositories.EmployeeRepository;
+import com.dstod.restaurantmanagerapi.users.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmployeeService {
-    private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
+    public void createUser() {
 
+    }
+
+    public void deleteUser() {
+
+    }
+
+    public void updateUser() {
+
+    }
 }

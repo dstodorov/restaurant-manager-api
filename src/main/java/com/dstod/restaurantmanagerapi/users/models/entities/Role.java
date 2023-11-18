@@ -1,5 +1,6 @@
-package com.dstod.restaurantmanagerapi.users.models;
+package com.dstod.restaurantmanagerapi.users.models.entities;
 
+import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;
 import jakarta.persistence.*;
 
 @Entity

@@ -1,7 +1,7 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
-import com.dstod.restaurantmanagerapi.users.models.Role;
-import com.dstod.restaurantmanagerapi.users.models.RoleType;
+import com.dstod.restaurantmanagerapi.users.models.entities.Role;
+import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;
 import com.dstod.restaurantmanagerapi.users.repositories.RoleRepository;
 import org.springframework.stereotype.Service;
 

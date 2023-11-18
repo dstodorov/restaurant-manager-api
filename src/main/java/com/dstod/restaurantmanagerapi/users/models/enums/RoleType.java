@@ -1,4 +1,4 @@
-package com.dstod.restaurantmanagerapi.users.models;
+package com.dstod.restaurantmanagerapi.users.models.enums;
 
 public enum RoleType {
     ADMIN,

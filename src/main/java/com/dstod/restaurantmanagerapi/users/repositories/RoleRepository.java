@@ -1,6 +1,6 @@
 package com.dstod.restaurantmanagerapi.users.repositories;
 
-import com.dstod.restaurantmanagerapi.users.models.Role;
+import com.dstod.restaurantmanagerapi.users.models.entities.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

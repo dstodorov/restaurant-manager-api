@@ -1,13 +1,12 @@
-package com.dstod.restaurantmanagerapi.users.models;
+package com.dstod.restaurantmanagerapi.users.models.entities;
 
 import jakarta.persistence.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "emplyees")
-public abstract class Employee {
+public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -28,14 +27,14 @@ public abstract class Employee {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    public Employee() {
+    public User() {
     }
 
     public long getId() {
         return id;
     }
 
-    public Employee setId(long id) {
+    public User setId(long id) {
         this.id = id;
         return this;
     }
@@ -44,7 +43,7 @@ public abstract class Employee {
         return firstName;
     }
 
-    public Employee setFirstName(String firstName) {
+    public User setFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
@@ -53,7 +52,7 @@ public abstract class Employee {
         return middleName;
     }
 
-    public Employee setMiddleName(String middleName) {
+    public User setMiddleName(String middleName) {
         this.middleName = middleName;
         return this;
     }
@@ -62,7 +61,7 @@ public abstract class Employee {
         return lastName;
     }
 
-    public Employee setLastName(String lastName) {
+    public User setLastName(String lastName) {
         this.lastName = lastName;
         return this;
     }
@@ -71,7 +70,7 @@ public abstract class Employee {
         return username;
     }
 
-    public Employee setUsername(String username) {
+    public User setUsername(String username) {
         this.username = username;
         return this;
     }
@@ -80,7 +79,7 @@ public abstract class Employee {
         return password;
     }
 
-    public Employee setPassword(String password) {
+    public User setPassword(String password) {
         this.password = password;
         return this;
     }
@@ -89,7 +88,7 @@ public abstract class Employee {
         return roles;
     }
 
-    public Employee setRoles(Set<Role> roles) {
+    public User setRoles(Set<Role> roles) {
         this.roles = roles;
         return this;
     }
@@ -98,7 +97,7 @@ public abstract class Employee {
         return email;
     }
 
-    public Employee setEmail(String email) {
+    public User setEmail(String email) {
         this.email = email;
         return this;
     }
@@ -107,7 +106,7 @@ public abstract class Employee {
         return phoneNumber;
     }
 
-    public Employee setPhoneNumber(String phoneNumber) {
+    public User setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         return this;
     }
