@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "emplyees")
-public abstract class User {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -28,6 +28,17 @@ public abstract class User {
     private String phoneNumber;
 
     public User() {
+    }
+
+    public User(String firstName, String middleName, String lastName, String username, String password, Set<Role> roles, String email, String phoneNumber) {
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 
     public long getId() {

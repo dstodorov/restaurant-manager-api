@@ -4,7 +4,7 @@ import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "user_roles")
+@Table(name = "roles")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
