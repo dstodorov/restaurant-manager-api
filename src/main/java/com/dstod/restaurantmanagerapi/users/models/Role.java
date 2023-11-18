@@ -1,20 +1,34 @@
 package com.dstod.restaurantmanagerapi.users.models;
 
-public enum Role {
-    ADMIN,
-    CEO,
-    RESTAURANT_MANAGER,
-    ASSISTANT_MANAGER,
-    WAITER,
-    HOST,
-    BARTENDER,
-    BARBACK,
-    BARISTA,
-    BUSSER,
-    HEAD_CHEF,
-    SOUS_CHEF,
-    PREP_COOK,
-    LINE_COOK,
-    DISHWASHER,
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "user_roles")
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    @Enumerated
+    private RoleType role;
+
+    public Role() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public Role setId(long id) {
+        this.id = id;
+        return this;
+    }
+
+    public RoleType getRole() {
+        return role;
+    }
+
+    public Role setRole(RoleType role) {
+        this.role = role;
+        return this;
+    }
 }
