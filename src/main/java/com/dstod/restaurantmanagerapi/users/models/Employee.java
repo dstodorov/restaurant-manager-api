@@ -15,7 +15,7 @@ public abstract class Employee {
     private String firstName;
     @Column(name = "middle_name", nullable = false)
     private String middleName;
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
     @Column(name = "username", nullable = false)
     private String username;
