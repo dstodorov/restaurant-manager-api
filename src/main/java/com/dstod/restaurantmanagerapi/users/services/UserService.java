@@ -1,7 +1,9 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
 import com.dstod.restaurantmanagerapi.users.exceptions.UserDetailsDuplicationException;
+import com.dstod.restaurantmanagerapi.users.exceptions.UserNotFoundException;
 import com.dstod.restaurantmanagerapi.users.models.dtos.CreateUserRequest;
+import com.dstod.restaurantmanagerapi.users.models.dtos.UserInfoResponse;
 import com.dstod.restaurantmanagerapi.users.models.entities.Role;
 import com.dstod.restaurantmanagerapi.users.models.entities.User;
 import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;
@@ -10,6 +12,7 @@ import com.dstod.restaurantmanagerapi.users.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,6 +49,27 @@ public class UserService {
         return savedUser.getId();
     }
 
+
+
+    public UserInfoResponse getUserInfo(long userId) {
+        User user = this.userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exist!", userId)));
+
+
+        return mapUserEntityToUserInfoResponse(user);
+    }
+
+
+
+    public void deleteUser() {
+
+    }
+
+    public void updateUser() {
+
+    }
+
     private User mapUserRequestToUserEntity(CreateUserRequest createUserRequest) {
 
         Set<Role> roles = new HashSet<>();
@@ -68,11 +92,17 @@ public class UserService {
         );
     }
 
-    public void deleteUser() {
+    private UserInfoResponse mapUserEntityToUserInfoResponse(User user) {
+        List<String> roles = user.getRoles().stream().map(role -> role.getRole().name()).toList();
 
-    }
-
-    public void updateUser() {
-
+        return new UserInfoResponse(
+                user.getFirstName(),
+                user.getMiddleName(),
+                user.getLastName(),
+                user.getUsername(),
+                roles,
+                user.getEmail(),
+                user.getPhoneNumber()
+        );
     }
 }
