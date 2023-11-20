@@ -3,7 +3,8 @@ package com.dstod.restaurantmanagerapi.users.services;
 import com.dstod.restaurantmanagerapi.users.exceptions.UserDetailsDuplicationException;
 import com.dstod.restaurantmanagerapi.users.exceptions.UserNotFoundException;
 import com.dstod.restaurantmanagerapi.users.models.dtos.CreateUserRequest;
-import com.dstod.restaurantmanagerapi.users.models.dtos.UserInfoResponse;
+import com.dstod.restaurantmanagerapi.users.models.dtos.UpdateUserDetailsRequest;
+import com.dstod.restaurantmanagerapi.users.models.dtos.UserDetailsResponse;
 import com.dstod.restaurantmanagerapi.users.models.entities.Role;
 import com.dstod.restaurantmanagerapi.users.models.entities.User;
 import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;
@@ -51,7 +52,7 @@ public class UserService {
 
 
 
-    public UserInfoResponse getUserInfo(long userId) {
+    public UserDetailsResponse getUserInfo(long userId) {
         User user = this.userRepository
                 .findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exist!", userId)));
@@ -60,13 +61,59 @@ public class UserService {
         return mapUserEntityToUserInfoResponse(user);
     }
 
+    public UserDetailsResponse updateUserDetails(long userId, UpdateUserDetailsRequest userDetailsRequest) {
+
+        Optional<User> userByUsername = this.userRepository.findByUsernameExcludingUserId(userDetailsRequest.username(), userId);
+        Optional<User> userByEmail = this.userRepository.findByEmailExcludingUserId(userDetailsRequest.email(), userId);
+        Optional<User> userByPhoneNumber = this.userRepository.findByPhoneNumberExcludingUserId(userDetailsRequest.phoneNumber(), userId);
+        Optional<User> userById = this.userRepository.findById(userId);
+
+        if (userById.isEmpty()) {
+            throw new UserNotFoundException(String.format("User with id %d does not exist!", userId));
+        }
+
+        if (userByUsername.isPresent()) {
+            throw new UserDetailsDuplicationException("username exist");
+        }
+
+        if (userByEmail.isPresent()) {
+            throw new UserDetailsDuplicationException("email exist");
+        }
+
+        if (userByPhoneNumber.isPresent()) {
+            throw new UserDetailsDuplicationException("phone number exist");
+        }
+
+        updateUserEntity(userById.get(), userDetailsRequest);
+
+        return mapUserEntityToUserInfoResponse(userById.get());
+    }
+
+    private void updateUserEntity(User user, UpdateUserDetailsRequest userDetailsRequest) {
+
+        Set<Role> roles = new HashSet<>();
+
+        userDetailsRequest.roles().forEach(userRole -> {
+            Role role = new Role(RoleType.valueOf(userRole));
+            this.roleRepository.save(role);
+
+            roles.add(role);
+        });
+
+        user.setFirstName(userDetailsRequest.firstName());
+        user.setMiddleName(userDetailsRequest.middleName());
+        user.setLastName(userDetailsRequest.lastName());
+        user.setUsername(userDetailsRequest.username());
+        user.setPassword(userDetailsRequest.password());
+        user.setRoles(roles);
+        user.setEmail(userDetailsRequest.email());
+        user.setPhoneNumber(userDetailsRequest.phoneNumber());
+
+        this.userRepository.save(user);
+    }
 
 
     public void deleteUser() {
-
-    }
-
-    public void updateUser() {
 
     }
 
@@ -92,10 +139,10 @@ public class UserService {
         );
     }
 
-    private UserInfoResponse mapUserEntityToUserInfoResponse(User user) {
+    private UserDetailsResponse mapUserEntityToUserInfoResponse(User user) {
         List<String> roles = user.getRoles().stream().map(role -> role.getRole().name()).toList();
 
-        return new UserInfoResponse(
+        return new UserDetailsResponse(
                 user.getFirstName(),
                 user.getMiddleName(),
                 user.getLastName(),
@@ -105,4 +152,6 @@ public class UserService {
                 user.getPhoneNumber()
         );
     }
+
+
 }

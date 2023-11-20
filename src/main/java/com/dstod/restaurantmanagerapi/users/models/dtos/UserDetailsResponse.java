@@ -3,7 +3,7 @@ package com.dstod.restaurantmanagerapi.users.models.dtos;
 
 import java.util.List;
 
-public record UserInfoResponse(
+public record UserDetailsResponse(
         String firstName,
         String middleName,
         String lastName,

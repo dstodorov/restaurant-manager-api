@@ -7,6 +7,5 @@ public interface RmMessages {
     String RECIPE_NOT_FOUND = "Recipe with id %d, not found!";
 
     // Exceptions
-
     String PRODUCT_NOT_FOUND = "Product with id %d was not found!";
 }

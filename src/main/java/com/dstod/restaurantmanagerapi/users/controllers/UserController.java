@@ -1,7 +1,8 @@
 package com.dstod.restaurantmanagerapi.users.controllers;
 
 import com.dstod.restaurantmanagerapi.users.models.dtos.CreateUserRequest;
-import com.dstod.restaurantmanagerapi.users.models.dtos.UserInfoResponse;
+import com.dstod.restaurantmanagerapi.users.models.dtos.UpdateUserDetailsRequest;
+import com.dstod.restaurantmanagerapi.users.models.dtos.UserDetailsResponse;
 import com.dstod.restaurantmanagerapi.users.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,18 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable long userId) {
-        UserInfoResponse userInfo = this.userService.getUserInfo(userId);
+    public ResponseEntity<UserDetailsResponse> getUserDetails(@PathVariable long userId) {
+        UserDetailsResponse userInfo = this.userService.getUserInfo(userId);
 
         return ResponseEntity.ok(userInfo);
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDetailsResponse> updateUserDetails(@PathVariable long userId,
+                                                                 @RequestBody @Valid UpdateUserDetailsRequest updateUserDetailsRequest) {
+        UserDetailsResponse updatedUserDetails = this.userService.updateUserDetails(userId, updateUserDetailsRequest);
+
+        return  ResponseEntity.ok(updatedUserDetails);
     }
 
 }
