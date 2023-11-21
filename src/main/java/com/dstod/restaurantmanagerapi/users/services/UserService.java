@@ -2,6 +2,7 @@ package com.dstod.restaurantmanagerapi.users.services;
 
 import com.dstod.restaurantmanagerapi.users.exceptions.UserDetailsDuplicationException;
 import com.dstod.restaurantmanagerapi.users.exceptions.UserNotFoundException;
+import com.dstod.restaurantmanagerapi.users.exceptions.UserRoleDoesNotExistException;
 import com.dstod.restaurantmanagerapi.users.models.dtos.CreateUserRequest;
 import com.dstod.restaurantmanagerapi.users.models.dtos.UpdateUserDetailsRequest;
 import com.dstod.restaurantmanagerapi.users.models.dtos.UserDetailsResponse;
@@ -91,14 +92,10 @@ public class UserService {
 
     private void updateUserEntity(User user, UpdateUserDetailsRequest userDetailsRequest) {
 
-        Set<Role> roles = new HashSet<>();
+        user.getRoles().clear();
+        this.userRepository.save(user);
 
-        userDetailsRequest.roles().forEach(userRole -> {
-            Role role = new Role(RoleType.valueOf(userRole));
-            this.roleRepository.save(role);
-
-            roles.add(role);
-        });
+        Set<Role> roles = getRoleEntities(userDetailsRequest.roles());
 
         user.setFirstName(userDetailsRequest.firstName());
         user.setMiddleName(userDetailsRequest.middleName());
@@ -112,21 +109,25 @@ public class UserService {
         this.userRepository.save(user);
     }
 
+    private Set<Role> getRoleEntities(List<String> roles) {
+        Set<Role> roleEntities = new HashSet<>();
 
-    public void deleteUser() {
+        roles.forEach(userRole -> {
+            // Can throw UserRoleNotFoundException
+            RoleType roleType = RoleType.fromString(userRole);
 
+            Role role = this.roleRepository.findByRole(roleType);
+
+            roleEntities.add(role);
+        });
+
+        return roleEntities;
     }
 
     private User mapUserRequestToUserEntity(CreateUserRequest createUserRequest) {
 
-        Set<Role> roles = new HashSet<>();
+        Set<Role> roles = getRoleEntities(createUserRequest.roles());
 
-        createUserRequest.roles().forEach(userRole -> {
-            Role role = new Role(RoleType.valueOf(userRole));
-            this.roleRepository.save(role);
-
-            roles.add(role);
-        });
         return new User(
                 createUserRequest.firstName(),
                 createUserRequest.middleName(),
@@ -152,6 +153,4 @@ public class UserService {
                 user.getPhoneNumber()
         );
     }
-
-
 }
