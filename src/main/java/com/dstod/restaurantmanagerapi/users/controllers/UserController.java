@@ -1,6 +1,8 @@
 package com.dstod.restaurantmanagerapi.users.controllers;
 
+import com.dstod.restaurantmanagerapi.users.security.AuthenticationResponse;
 import com.dstod.restaurantmanagerapi.users.models.dtos.CreateUserRequest;
+import com.dstod.restaurantmanagerapi.users.models.dtos.LoginRequest;
 import com.dstod.restaurantmanagerapi.users.models.dtos.UpdateUserDetailsRequest;
 import com.dstod.restaurantmanagerapi.users.models.dtos.UserDetailsResponse;
 import com.dstod.restaurantmanagerapi.users.services.UserService;
@@ -19,10 +21,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createUser(@Valid @RequestBody CreateUserRequest createUserRequest, UriComponentsBuilder uriComponentsBuilder) {
-        Long userId = this.userService.createUser(createUserRequest);
+    public ResponseEntity<AuthenticationResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest, UriComponentsBuilder uriComponentsBuilder) {
+        return ResponseEntity.ok(this.userService.createUser(createUserRequest));
+    }
 
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/v1/users/{id}").build(userId)).build();
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.authenticate(loginRequest));
     }
 
     @GetMapping("/{userId}")

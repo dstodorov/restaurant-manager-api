@@ -1,9 +1,10 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
+import com.dstod.restaurantmanagerapi.users.security.AuthenticationResponse;
 import com.dstod.restaurantmanagerapi.users.exceptions.UserDetailsDuplicationException;
 import com.dstod.restaurantmanagerapi.users.exceptions.UserNotFoundException;
-import com.dstod.restaurantmanagerapi.users.exceptions.UserRoleDoesNotExistException;
 import com.dstod.restaurantmanagerapi.users.models.dtos.CreateUserRequest;
+import com.dstod.restaurantmanagerapi.users.models.dtos.LoginRequest;
 import com.dstod.restaurantmanagerapi.users.models.dtos.UpdateUserDetailsRequest;
 import com.dstod.restaurantmanagerapi.users.models.dtos.UserDetailsResponse;
 import com.dstod.restaurantmanagerapi.users.models.entities.Role;
@@ -11,6 +12,10 @@ import com.dstod.restaurantmanagerapi.users.models.entities.User;
 import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;
 import com.dstod.restaurantmanagerapi.users.repositories.RoleRepository;
 import com.dstod.restaurantmanagerapi.users.repositories.UserRepository;
+import com.dstod.restaurantmanagerapi.users.security.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -22,12 +27,19 @@ import java.util.Set;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
-    public Long createUser(CreateUserRequest createUserRequest) {
+    public AuthenticationResponse createUser(CreateUserRequest createUserRequest) {
 
         Optional<User> userByUsername = this.userRepository.findByUsername(createUserRequest.username());
         Optional<User> userByEmail = this.userRepository.findByEmail(createUserRequest.email());
@@ -46,11 +58,27 @@ public class UserService {
         }
 
         User user = mapUserRequestToUserEntity(createUserRequest);
-        User savedUser = this.userRepository.save(user);
+        this.userRepository.save(user);
 
-        return savedUser.getId();
+        String jwtToken = jwtService.generateToken(user);
+
+        return new AuthenticationResponse(jwtToken);
     }
 
+    public AuthenticationResponse authenticate(LoginRequest loginRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.username(),
+                        loginRequest.password()
+                )
+        );
+
+        User user = userRepository.findByUsername(loginRequest.username()).orElseThrow();
+
+        String jwtToken = jwtService.generateToken(user);
+
+        return new AuthenticationResponse(jwtToken);
+    }
 
 
     public UserDetailsResponse getUserInfo(long userId) {
@@ -127,13 +155,12 @@ public class UserService {
     private User mapUserRequestToUserEntity(CreateUserRequest createUserRequest) {
 
         Set<Role> roles = getRoleEntities(createUserRequest.roles());
-
         return new User(
                 createUserRequest.firstName(),
                 createUserRequest.middleName(),
                 createUserRequest.lastName(),
                 createUserRequest.username(),
-                createUserRequest.password(),
+                passwordEncoder.encode(createUserRequest.password()),
                 roles,
                 createUserRequest.email(),
                 createUserRequest.phoneNumber()
