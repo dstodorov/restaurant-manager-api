@@ -20,6 +20,14 @@ spring:
           root: INFO
 server:
   port: 3000
+
+application:
+  security:
+    jwt:
+      secret-key: QStGaFp2Z294a3pOWSszb2I1OTdoVXRQNGY2SE41aFVORDV1SXBSbTZrclRFRU1sTmRuK3hoWWJJaVIxMzlvYw==
+      expiration: 86400000 # 1 day
+      refresh-token:
+        expiration: 604800000 # 7 days
 #logging:
 #  level:
 #    org.springframework.security: DEBUG
