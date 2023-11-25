@@ -2,6 +2,7 @@ package com.dstod.restaurantmanagerapi.users.controllers;
 
 import com.dstod.restaurantmanagerapi.users.models.dtos.AuthenticationResponse;
 import com.dstod.restaurantmanagerapi.users.models.dtos.LoginRequest;
+import com.dstod.restaurantmanagerapi.users.services.AuthenticationService;
 import com.dstod.restaurantmanagerapi.users.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,15 +17,15 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-    private final UserService userService;
+    private final AuthenticationService authenticationService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(userService.authenticate(loginRequest));
+        return ResponseEntity.ok(authenticationService.authenticate(loginRequest));
     }
 
     @PostMapping("/refresh-token")
@@ -32,6 +33,6 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        userService.refreshToken(request, response);
+        authenticationService.refreshToken(request, response);
     }
 }
