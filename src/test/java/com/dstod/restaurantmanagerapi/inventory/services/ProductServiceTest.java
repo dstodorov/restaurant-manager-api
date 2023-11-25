@@ -1,8 +1,8 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.inventory.exceptions.DuplicatedProductException;
-import com.dstod.restaurantmanagerapi.inventory.exceptions.ProductNotFoundException;
-import com.dstod.restaurantmanagerapi.inventory.models.Product;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedProductException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.Product;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
 import com.dstod.restaurantmanagerapi.inventory.repositories.ProductRepository;
 import com.dstod.restaurantmanagerapi.inventory.utilities.InventoryUtility;

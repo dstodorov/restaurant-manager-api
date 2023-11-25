@@ -1,7 +1,7 @@
 package com.dstod.restaurantmanagerapi.inventory.utilities;
 
-import com.dstod.restaurantmanagerapi.inventory.models.Product;
-import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.Product;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.enums.ProductCategory;

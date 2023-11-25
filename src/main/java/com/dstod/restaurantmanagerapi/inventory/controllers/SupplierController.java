@@ -12,7 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.dstod.restaurantmanagerapi.inventory.models.ErrorMessage;
+import com.dstod.restaurantmanagerapi.common.models.ErrorMessage;
 
 import java.util.ArrayList;
 import java.util.List;

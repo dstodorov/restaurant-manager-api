@@ -1,6 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.repositories;
 
-import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

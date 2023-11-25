@@ -1,11 +1,11 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.core.messages.RmMessages;
-import com.dstod.restaurantmanagerapi.inventory.exceptions.ProductNotFoundException;
-import com.dstod.restaurantmanagerapi.inventory.exceptions.RecipeNotFoundException;
-import com.dstod.restaurantmanagerapi.inventory.models.Product;
-import com.dstod.restaurantmanagerapi.inventory.models.Recipe;
-import com.dstod.restaurantmanagerapi.inventory.models.RecipeProduct;
+import com.dstod.restaurantmanagerapi.common.messages.RmMessages;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.RecipeNotFoundException;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.Product;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.Recipe;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.RecipeProduct;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeProductDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeProductsDTO;
 import com.dstod.restaurantmanagerapi.inventory.repositories.ProductRepository;

@@ -1,8 +1,6 @@
 package com.dstod.restaurantmanagerapi.users.models.enums;
 
-import com.dstod.restaurantmanagerapi.users.exceptions.UserRoleDoesNotExistException;
-
-import java.util.Arrays;
+import com.dstod.restaurantmanagerapi.common.exceptions.users.UserRoleDoesNotExistException;
 
 public enum RoleType {
     ADMIN,

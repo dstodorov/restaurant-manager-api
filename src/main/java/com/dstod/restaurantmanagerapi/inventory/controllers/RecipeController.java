@@ -3,7 +3,7 @@ package com.dstod.restaurantmanagerapi.inventory.controllers;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeDTO;
 import com.dstod.restaurantmanagerapi.inventory.services.RecipeService;
 
-import com.dstod.restaurantmanagerapi.inventory.models.ErrorMessage;
+import com.dstod.restaurantmanagerapi.common.models.ErrorMessage;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

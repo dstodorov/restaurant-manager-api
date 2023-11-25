@@ -1,11 +1,11 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.inventory.exceptions.InventoryProductNotFoundException;
-import com.dstod.restaurantmanagerapi.inventory.exceptions.ProductNotFoundException;
-import com.dstod.restaurantmanagerapi.inventory.exceptions.SupplierNotFoundException;
-import com.dstod.restaurantmanagerapi.core.messages.RmMessages;
-import com.dstod.restaurantmanagerapi.inventory.models.*;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.InventoryProductNotFoundException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.SupplierNotFoundException;
+import com.dstod.restaurantmanagerapi.common.messages.RmMessages;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.*;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.*;
 import com.dstod.restaurantmanagerapi.inventory.repositories.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -108,7 +108,7 @@ public class InventoryService {
         Recipe recipe = recipeById.get();
         ArrayList<String> inventoryIssues = new ArrayList<>();
 
-        for (RecipeProduct  recipeProduct: recipeProductRepository.findRecipeProductByRecipe(recipe)) {
+        for (RecipeProduct recipeProduct: recipeProductRepository.findRecipeProductByRecipe(recipe)) {
             String productAvailabilityIssue = checkProductAvailability(recipeProduct, numberOfDishes);
             
             if (!productAvailabilityIssue.isEmpty()) {

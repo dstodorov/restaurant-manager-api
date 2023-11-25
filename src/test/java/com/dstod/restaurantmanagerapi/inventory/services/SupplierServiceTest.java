@@ -1,16 +1,11 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.inventory.exceptions.DuplicatedSupplierException;
-import com.dstod.restaurantmanagerapi.inventory.exceptions.SupplierNotFoundException;
-import com.dstod.restaurantmanagerapi.inventory.models.Inventory;
-import com.dstod.restaurantmanagerapi.inventory.models.Product;
-import com.dstod.restaurantmanagerapi.inventory.models.Supplier;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductsDTO;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedSupplierException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.SupplierNotFoundException;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
 import com.dstod.restaurantmanagerapi.inventory.utilities.InventoryUtility;
-import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

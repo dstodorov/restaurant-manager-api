@@ -1,9 +1,9 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
-import com.dstod.restaurantmanagerapi.core.messages.RmMessages;
+import com.dstod.restaurantmanagerapi.common.messages.RmMessages;
 import com.dstod.restaurantmanagerapi.users.models.dtos.*;
-import com.dstod.restaurantmanagerapi.users.exceptions.UserDetailsDuplicationException;
-import com.dstod.restaurantmanagerapi.users.exceptions.UserNotFoundException;
+import com.dstod.restaurantmanagerapi.common.exceptions.users.UserDetailsDuplicationException;
+import com.dstod.restaurantmanagerapi.common.exceptions.users.UserNotFoundException;
 import com.dstod.restaurantmanagerapi.users.models.entities.Role;
 import com.dstod.restaurantmanagerapi.users.models.entities.User;
 import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;

@@ -1,6 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.controllers;
 
-import com.dstod.restaurantmanagerapi.inventory.models.CheckoutStatus;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.CheckoutStatus;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.AddInventoryProductDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.CheckoutProductsRequestDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductInfoDTO;
