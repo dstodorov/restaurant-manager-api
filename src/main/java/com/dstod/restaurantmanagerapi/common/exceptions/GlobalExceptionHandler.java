@@ -15,21 +15,25 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotExistingProductException(ProductNotFoundException exception) {
-        return new ResponseEntity<>(new ErrorResponse("Inventory", exception.getMessage()), HttpStatus.NOT_FOUND);
+        return sendResponseMessage("Inventory", exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserDetailsDuplicationException.class)
     public ResponseEntity<ErrorResponse> handleUserDetailsDuplicationException(UserDetailsDuplicationException exception) {
-        return new ResponseEntity<>(new ErrorResponse("Users", exception.getMessage()), HttpStatus.CONFLICT);
+        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException exception) {
-        return new ResponseEntity<>(new ErrorResponse("Users", exception.getMessage()), HttpStatus.NOT_FOUND);
+        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserRoleDoesNotExistException.class)
     public ResponseEntity<ErrorResponse> handleUserRoleDoesNotExistException(UserRoleDoesNotExistException exception) {
-        return new ResponseEntity<>(new ErrorResponse("Users", exception.getMessage()), HttpStatus.NOT_FOUND);
+        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    private ResponseEntity<ErrorResponse> sendResponseMessage(String module, String message, HttpStatus status) {
+        return new ResponseEntity<>(new ErrorResponse(module, message), status);
     }
 }

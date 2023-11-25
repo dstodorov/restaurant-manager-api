@@ -1,6 +1,6 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
-import com.dstod.restaurantmanagerapi.common.messages.RmMessages;
+import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.users.models.dtos.*;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserDetailsDuplicationException;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserNotFoundException;
@@ -41,14 +41,14 @@ public class UserService {
         User user = mapUserRequestToUserEntity(createUserRequest);
         this.userRepository.save(user);
 
-        return new StatusResponse(HttpStatus.OK, RmMessages.USER_CREATED);
+        return new StatusResponse(HttpStatus.OK, ApplicationMessages.USER_CREATED);
     }
 
 
     public UserDetailsResponse getUserInfo(long userId) {
         User user = this.userRepository
                 .findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(String.format(RmMessages.USER_ID_NOT_EXISTS, userId)));
+                .orElseThrow(() -> new UserNotFoundException(String.format(ApplicationMessages.USER_ID_NOT_EXISTS, userId)));
 
         return mapUserEntityToUserInfoResponse(user);
     }
@@ -57,7 +57,7 @@ public class UserService {
         Optional<User> userById = this.userRepository.findById(userId);
 
         if (userById.isEmpty()) {
-            throw new UserNotFoundException(String.format(RmMessages.USER_ID_NOT_EXISTS, userId));
+            throw new UserNotFoundException(String.format(ApplicationMessages.USER_ID_NOT_EXISTS, userId));
         }
 
         ensureUserDetailsDoNotExist(
@@ -84,15 +84,15 @@ public class UserService {
                 : this.userRepository.findByPhoneNumber(phoneNumber);
 
         if (userByUsername.isPresent()) {
-            throw new UserDetailsDuplicationException(String.format(RmMessages.USERNAME_EXISTS, username));
+            throw new UserDetailsDuplicationException(String.format(ApplicationMessages.USERNAME_EXISTS, username));
         }
 
         if (userByEmail.isPresent()) {
-            throw new UserDetailsDuplicationException(String.format(RmMessages.EMAIL_EXISTS, email));
+            throw new UserDetailsDuplicationException(String.format(ApplicationMessages.EMAIL_EXISTS, email));
         }
 
         if (userByPhoneNumber.isPresent()) {
-            throw new UserDetailsDuplicationException(String.format(RmMessages.PHONE_NUMBER_EXISTS, phoneNumber));
+            throw new UserDetailsDuplicationException(String.format(ApplicationMessages.PHONE_NUMBER_EXISTS, phoneNumber));
         }
     }
 

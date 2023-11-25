@@ -1,4 +1,4 @@
-package com.dstod.restaurantmanagerapi.users.repositories;
+package com.dstod.restaurantmanagerapi.auth.repository;
 
 import com.dstod.restaurantmanagerapi.auth.models.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;

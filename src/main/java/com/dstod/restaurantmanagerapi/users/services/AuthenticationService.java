@@ -5,7 +5,7 @@ import com.dstod.restaurantmanagerapi.users.models.dtos.LoginRequest;
 import com.dstod.restaurantmanagerapi.auth.models.entity.Token;
 import com.dstod.restaurantmanagerapi.users.models.entities.User;
 import com.dstod.restaurantmanagerapi.users.models.enums.TokenType;
-import com.dstod.restaurantmanagerapi.users.repositories.TokenRepository;
+import com.dstod.restaurantmanagerapi.auth.repository.TokenRepository;
 import com.dstod.restaurantmanagerapi.users.repositories.UserRepository;
 import com.dstod.restaurantmanagerapi.auth.services.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;

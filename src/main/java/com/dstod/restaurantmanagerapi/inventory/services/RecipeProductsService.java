@@ -1,6 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.common.messages.RmMessages;
+import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.RecipeNotFoundException;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.Product;
@@ -74,7 +74,7 @@ public class RecipeProductsService {
         // Not needed check, but made just to remove null waring on productById.get() line below
         // Its guaranteed this product exists in counter check above
         if (productById.isEmpty()) {
-            throw new ProductNotFoundException(String.format(RmMessages.PRODUCT_NOT_FOUND, recipeProduct.productId()));
+            throw new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, recipeProduct.productId()));
         }
 
         return new RecipeProduct(

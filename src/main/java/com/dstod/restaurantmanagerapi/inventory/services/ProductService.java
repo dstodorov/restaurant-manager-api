@@ -1,6 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.common.messages.RmMessages;
+import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedProductException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.Product;
@@ -62,7 +62,7 @@ public class ProductService {
         // Check if product is found, if not, throw exception
         this.productRepository
                 .findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(String.format(RmMessages.PRODUCT_NOT_FOUND, id)));
+                .orElseThrow(() -> new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, id)));
 
         // Check if product with this name exists in database
         if (productRepository.findByName(productDTO.name()).filter(p -> !p.getId().equals(id)).isPresent()) {

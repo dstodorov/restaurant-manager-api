@@ -3,7 +3,7 @@ package com.dstod.restaurantmanagerapi.inventory.services;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.InventoryProductNotFoundException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.SupplierNotFoundException;
-import com.dstod.restaurantmanagerapi.common.messages.RmMessages;
+import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.*;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.*;
 import com.dstod.restaurantmanagerapi.inventory.repositories.*;
@@ -40,7 +40,7 @@ public class InventoryService {
         Product product = productRepository
                 .findById(inventoryProductDTO.productId())
 
-                .orElseThrow(() -> new ProductNotFoundException(String.format(RmMessages.PRODUCT_NOT_FOUND, inventoryProductDTO.productId())));
+                .orElseThrow(() -> new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, inventoryProductDTO.productId())));
 
         LocalDate orderDate = LocalDate.now();
 
@@ -102,7 +102,7 @@ public class InventoryService {
         Optional<Recipe> recipeById = this.recipeRepository.findById(recipeId);
 
         if (recipeById.isEmpty()) {
-            return createCheckoutStatus(false, HttpStatus.NOT_FOUND, String.format(RmMessages.RECIPE_NOT_FOUND, recipeId));
+            return createCheckoutStatus(false, HttpStatus.NOT_FOUND, String.format(ApplicationMessages.RECIPE_NOT_FOUND, recipeId));
         }
 
         Recipe recipe = recipeById.get();
@@ -143,19 +143,19 @@ public class InventoryService {
 
         if (inventoryOptional.isEmpty()) {
 
-            return String.format(RmMessages.PRODUCT_MISSING, product.getId(), product.getName());
+            return String.format(ApplicationMessages.PRODUCT_MISSING, product.getId(), product.getName());
         }
 
         Inventory inventory = inventoryOptional.get();
 
         if (inventory.getWasted()) {
-            return String.format(RmMessages.PRODUCT_WASTED, product.getId(), product.getName());
+            return String.format(ApplicationMessages.PRODUCT_WASTED, product.getId(), product.getName());
         }
 
         double requiredQuantity = recipeProduct.getQuantity() * numberOfDishes;
 
         if (inventory.getCurrentQuantity() < requiredQuantity) {
-            return String.format(RmMessages.PRODUCT_OUT_OF_STOCK, product.getId(), product.getName());
+            return String.format(ApplicationMessages.PRODUCT_OUT_OF_STOCK, product.getId(), product.getName());
         }
 
         return "";
