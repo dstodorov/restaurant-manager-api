@@ -1,7 +1,7 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
+import com.dstod.restaurantmanagerapi.core.messages.RmMessages;
 import com.dstod.restaurantmanagerapi.users.models.dtos.*;
-import com.dstod.restaurantmanagerapi.users.repositories.TokenRepository;
 import com.dstod.restaurantmanagerapi.users.exceptions.UserDetailsDuplicationException;
 import com.dstod.restaurantmanagerapi.users.exceptions.UserNotFoundException;
 import com.dstod.restaurantmanagerapi.users.models.entities.Role;
@@ -9,9 +9,7 @@ import com.dstod.restaurantmanagerapi.users.models.entities.User;
 import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;
 import com.dstod.restaurantmanagerapi.users.repositories.RoleRepository;
 import com.dstod.restaurantmanagerapi.users.repositories.UserRepository;
-import com.dstod.restaurantmanagerapi.users.security.JwtService;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,84 +22,78 @@ import java.util.Set;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, TokenRepository tokenRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.tokenRepository = tokenRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
     }
 
     public StatusResponse createUser(CreateUserRequest createUserRequest) {
-
-        Optional<User> userByUsername = this.userRepository.findByUsername(createUserRequest.username());
-        Optional<User> userByEmail = this.userRepository.findByEmail(createUserRequest.email());
-        Optional<User> userByPhoneNumber = this.userRepository.findByPhoneNumber(createUserRequest.phoneNumber());
-
-        if (userByUsername.isPresent()) {
-            throw new UserDetailsDuplicationException("username exist");
-        }
-
-        if (userByEmail.isPresent()) {
-            throw new UserDetailsDuplicationException("email exist");
-        }
-
-        if (userByPhoneNumber.isPresent()) {
-            throw new UserDetailsDuplicationException("phone number exist");
-        }
+        ensureUserDetailsDoNotExist(
+                0,
+                createUserRequest.username(),
+                createUserRequest.email(),
+                createUserRequest.phoneNumber()
+        );
 
         User user = mapUserRequestToUserEntity(createUserRequest);
-        User savedUser = this.userRepository.save(user);
-//
-//        String jwtToken = jwtService.generateToken(user);
-//        String refreshToken = jwtService.generateRefreshToken(user);
-//        saveUserToken(savedUser, jwtToken);
+        this.userRepository.save(user);
 
-        return new StatusResponse(HttpStatus.OK, "User created!");
+        return new StatusResponse(HttpStatus.OK, RmMessages.USER_CREATED);
     }
 
 
     public UserDetailsResponse getUserInfo(long userId) {
         User user = this.userRepository
                 .findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exist!", userId)));
-
+                .orElseThrow(() -> new UserNotFoundException(String.format(RmMessages.USER_ID_NOT_EXISTS, userId)));
 
         return mapUserEntityToUserInfoResponse(user);
     }
 
     public UserDetailsResponse updateUserDetails(long userId, UpdateUserDetailsRequest userDetailsRequest) {
-
-        Optional<User> userByUsername = this.userRepository.findByUsernameExcludingUserId(userDetailsRequest.username(), userId);
-        Optional<User> userByEmail = this.userRepository.findByEmailExcludingUserId(userDetailsRequest.email(), userId);
-        Optional<User> userByPhoneNumber = this.userRepository.findByPhoneNumberExcludingUserId(userDetailsRequest.phoneNumber(), userId);
         Optional<User> userById = this.userRepository.findById(userId);
 
         if (userById.isEmpty()) {
-            throw new UserNotFoundException(String.format("User with id %d does not exist!", userId));
+            throw new UserNotFoundException(String.format(RmMessages.USER_ID_NOT_EXISTS, userId));
         }
 
-        if (userByUsername.isPresent()) {
-            throw new UserDetailsDuplicationException("username exist");
-        }
-
-        if (userByEmail.isPresent()) {
-            throw new UserDetailsDuplicationException("email exist");
-        }
-
-        if (userByPhoneNumber.isPresent()) {
-            throw new UserDetailsDuplicationException("phone number exist");
-        }
+        ensureUserDetailsDoNotExist(
+                userId,
+                userDetailsRequest.username(),
+                userDetailsRequest.email(),
+                userDetailsRequest.phoneNumber()
+        );
 
         updateUserEntity(userById.get(), userDetailsRequest);
 
         return mapUserEntityToUserInfoResponse(userById.get());
+    }
+
+    private void ensureUserDetailsDoNotExist(long userId, String username, String email, String phoneNumber) {
+        Optional<User> userByUsername = userId > 0 ?
+                this.userRepository.findByUsernameExcludingUserId(username, userId)
+                : this.userRepository.findByUsername(username);
+        Optional<User> userByEmail = userId > 0 ?
+                this.userRepository.findByEmailExcludingUserId(email, userId)
+                : this.userRepository.findByEmail(email);
+        Optional<User> userByPhoneNumber = userId > 0 ?
+                this.userRepository.findByPhoneNumberExcludingUserId(phoneNumber, userId)
+                : this.userRepository.findByPhoneNumber(phoneNumber);
+
+        if (userByUsername.isPresent()) {
+            throw new UserDetailsDuplicationException(String.format(RmMessages.USERNAME_EXISTS, username));
+        }
+
+        if (userByEmail.isPresent()) {
+            throw new UserDetailsDuplicationException(String.format(RmMessages.EMAIL_EXISTS, email));
+        }
+
+        if (userByPhoneNumber.isPresent()) {
+            throw new UserDetailsDuplicationException(String.format(RmMessages.PHONE_NUMBER_EXISTS, phoneNumber));
+        }
     }
 
     private void updateUserEntity(User user, UpdateUserDetailsRequest userDetailsRequest) {
