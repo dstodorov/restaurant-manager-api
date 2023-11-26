@@ -17,7 +17,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<StatusResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<StatusResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
         return ResponseEntity.ok(this.userService.createUser(createUserRequest));
     }
 

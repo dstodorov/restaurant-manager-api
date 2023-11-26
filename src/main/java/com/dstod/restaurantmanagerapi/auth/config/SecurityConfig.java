@@ -22,7 +22,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
-    public static String[] WHITELIST_ENDPOINTS = {"/api/v1/auth/**"};
+    public static String[] WHITELIST_ENDPOINTS = {"/api/v1/auth/**","/api-docs/**", "/swagger-ui/**"};
     public static String LOGOUT_ENDPOINT = "/api/v1/auth/logout";
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, AuthenticationProvider authenticationProvider, LogoutHandler logoutHandler) {

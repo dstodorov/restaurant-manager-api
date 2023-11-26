@@ -15,4 +15,11 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 
     @Query("SELECT s FROM Supplier s WHERE (s.name = :name OR s.email = :email OR s.phoneNumber = :phoneNumber) AND s.id <> :id")
     Optional<Supplier> findByNameOrEmailOrPhoneNumber(Long id, String name, String email, String phoneNumber);
+
+    @Query("SELECT s FROM Supplier s WHERE (s.name = :name AND s.id <> :supplierId)")
+    Optional<Supplier> findByNameExcludingSupplierId(long supplierId, String name);
+    @Query("SELECT s FROM Supplier s WHERE (s.email = :email AND s.id <> :supplierId)")
+    Optional<Supplier> findByEmailExcludingSupplierId(long supplierId, String email);
+    @Query("SELECT s FROM Supplier s WHERE (s.phoneNumber = :phoneNumber AND s.id <> :supplierId)")
+    Optional<Supplier> findByPhoneNumberExcludingSupplierId(long supplierId, String phoneNumber);
 }
