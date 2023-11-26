@@ -2,6 +2,8 @@ package com.dstod.restaurantmanagerapi.inventory.controllers;
 
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.services.SupplierService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/suppliers")
+@Tag(name = "Manager supplier APIs")
 public class SupplierController {
     private final SupplierService supplierService;
 
@@ -27,6 +30,7 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
+    @Operation(summary = "Add new supplier")
     @PostMapping
     public ResponseEntity<SupplierDTO> addSupplier(@RequestBody @Valid SupplierDTO supplierDTO, UriComponentsBuilder uriComponentsBuilder) {
         Long supplierId = this.supplierService.createSupplier(supplierDTO);
@@ -38,6 +42,7 @@ public class SupplierController {
         return ResponseEntity.created(uriComponentsBuilder.path("/api/v1/suppliers/{id}").build(supplierId)).build();
     }
 
+    @Operation(summary = "Get supplier by given ID")
     @GetMapping("/{id}")
     public ResponseEntity<SupplierDTO> getSupplierById(@PathVariable Long id) {
         Optional<SupplierDTO> supplier = this.supplierService.getSupplier(id);
@@ -46,6 +51,7 @@ public class SupplierController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    @Operation(summary = "Update supplier info by given ID")
     @PutMapping("/{id}")
     public ResponseEntity<SupplierDTO> updateSupplierInfo(@PathVariable Long id, @RequestBody @Valid SupplierDTO supplierDTO) {
         SupplierDTO supplier = this.supplierService.updateSupplier(id, supplierDTO);
@@ -53,6 +59,7 @@ public class SupplierController {
         return ResponseEntity.ok(supplier);
     }
 
+    @Operation(summary = "Get list of all suppliers")
     @GetMapping
     public ResponseEntity<List<SupplierDTO>> getAllSuppliers() {
         return this.supplierService.getAllSuppliers().map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());

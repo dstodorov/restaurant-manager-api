@@ -4,6 +4,8 @@ import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeDTO;
 import com.dstod.restaurantmanagerapi.inventory.services.RecipeService;
 
 import com.dstod.restaurantmanagerapi.common.models.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/recipes")
+@Tag(name = "Manage recipe APIs")
 public class RecipeController {
     private final RecipeService recipeService;
 
@@ -27,6 +30,7 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
+    @Operation(summary = "Create new recipe")
     @PostMapping
     public ResponseEntity<RecipeDTO> createRecipe(@Valid @RequestBody RecipeDTO recipeDTO, UriComponentsBuilder uriComponentsBuilder) {
 
@@ -39,6 +43,7 @@ public class RecipeController {
         return ResponseEntity.created(uriComponentsBuilder.path("/api/v1/recipes/{id}").build(recipeId)).build();
     }
 
+    @Operation(summary = "Get recipe info by given ID")
     @GetMapping("/{id}")
     public ResponseEntity<RecipeDTO> getRecipe(@PathVariable Long id) {
 
@@ -51,6 +56,7 @@ public class RecipeController {
                         .build());
     }
 
+    @Operation(summary = "Get list of all recipes")
     @GetMapping
     public ResponseEntity<List<RecipeDTO>> getAllRecipes() {
         Optional<List<RecipeDTO>> allRecipes = this.recipeService.getAllRecipes();
@@ -58,6 +64,7 @@ public class RecipeController {
         return allRecipes.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    @Operation(summary = "Update recipe by given ID")
     @PutMapping("/{id}")
     public ResponseEntity<RecipeDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody RecipeDTO recipeDTO) {
         RecipeDTO recipe = this.recipeService.updateRecipe(id, recipeDTO);

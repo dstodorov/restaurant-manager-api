@@ -3,6 +3,8 @@ package com.dstod.restaurantmanagerapi.auth.controller;
 import com.dstod.restaurantmanagerapi.auth.models.dto.AuthenticationResponse;
 import com.dstod.restaurantmanagerapi.users.models.dtos.LoginRequest;
 import com.dstod.restaurantmanagerapi.users.services.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@Tag(name = "User authentication APIs")
 public class AuthController {
     private final AuthenticationService authenticationService;
 
@@ -22,11 +25,13 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
+    @Operation(summary = "User login")
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authenticationService.authenticate(loginRequest));
     }
 
+    @Operation(summary = "Renew token")
     @PostMapping("/refresh-token")
     public void refreshToken(
             HttpServletRequest request,

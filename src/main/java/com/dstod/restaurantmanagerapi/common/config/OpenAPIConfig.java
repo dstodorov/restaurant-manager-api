@@ -16,7 +16,6 @@ public class OpenAPIConfig {
                         .contact(new Contact()
                                 .name("Dimitar Todorov")
                                 .email("d.todorov.vn@gmail.com")
-                                .url("www.codesharing.org")
                         )
                         .description("This API is made to be consumed by Web and Mobile front-end applications")
                         .version("v0.1")

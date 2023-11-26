@@ -5,6 +5,8 @@ import com.dstod.restaurantmanagerapi.inventory.models.dtos.AddInventoryProductD
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.CheckoutProductsRequestDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductInfoDTO;
 import com.dstod.restaurantmanagerapi.inventory.services.InventoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/inventory")
+@Tag(name = "Manage Inventory products APIs")
 public class InventoryController {
 
     private final InventoryService inventoryService;
@@ -23,6 +26,7 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
+    @Operation(summary = "Add new product to the inventory")
     @PostMapping
     public ResponseEntity<AddInventoryProductDTO> addInventoryProduct(@Valid @RequestBody AddInventoryProductDTO inventoryProductDTO,
                                                                       UriComponentsBuilder uriComponentsBuilder) {
@@ -36,6 +40,7 @@ public class InventoryController {
                 .build();
     }
 
+    @Operation(summary = "Get inventory product information by given ID")
     @GetMapping("/{id}")
     public ResponseEntity<InventoryProductInfoDTO> getInventoryProductInfo(@PathVariable Long id) {
 
@@ -44,11 +49,13 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryProductInfo);
     }
 
+    @Operation(summary = "Get information about all products in the inventory")
     @GetMapping
     public ResponseEntity<List<InventoryProductInfoDTO>> getInventoryProducts() {
         return this.inventoryService.getInventoryProducts().map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    @Operation(summary = "Checkout products from the inventory")
     @GetMapping("/checkout")
     public ResponseEntity<CheckoutStatus> checkoutRecipeProducts(@Valid @RequestBody CheckoutProductsRequestDTO request) {
         CheckoutStatus checkoutStatus = this.inventoryService.checkoutRecipeProducts(request.recipeId(), request.quantity());
