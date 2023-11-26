@@ -1,7 +1,8 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedSupplierException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedSupplierDetailsException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.SupplierNotFoundException;
+import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
@@ -21,13 +22,7 @@ public class SupplierService {
 
     public Long createSupplier(SupplierDTO supplierDTO) {
 
-        Optional<Supplier> supplierByName = this.supplierRepository.findByName(supplierDTO.name());
-        Optional<Supplier> supplierByEmail = this.supplierRepository.findByEmail(supplierDTO.email());
-        Optional<Supplier> supplierByPhoneNumber = this.supplierRepository.findByPhoneNumber(supplierDTO.phoneNumber());
-
-        if (supplierByName.isPresent() || supplierByEmail.isPresent() || supplierByPhoneNumber.isPresent()) {
-            return -1L;
-        }
+        ensureSupplierDetailsDoesNotExist(0, supplierDTO.name(), supplierDTO.email(), supplierDTO.phoneNumber());
 
         Supplier supplier = mapToSupplier(supplierDTO);
 
@@ -39,23 +34,12 @@ public class SupplierService {
     }
 
     public SupplierDTO updateSupplier(Long id, SupplierDTO supplierDTO) {
-        // Check if supplier exists, if not, throw exception
         Supplier supplier = this.supplierRepository
                 .findById(id)
-                .orElseThrow(() -> new SupplierNotFoundException(id.toString()));
+                .orElseThrow(() -> new SupplierNotFoundException(String.format(ApplicationMessages.SUPPLIER_NOT_FOUND, id)));
 
-        Optional<Supplier> supplierByNameOrEmailOrPhoneNumber = this.supplierRepository
-                .findByNameOrEmailOrPhoneNumber(id,
-                        supplierDTO.name(),
-                        supplierDTO.email(),
-                        supplierDTO.phoneNumber());
+        ensureSupplierDetailsDoesNotExist(id, supplierDTO.name(), supplierDTO.email(), supplierDTO.phoneNumber());
 
-        // Throw duplication exception if there record with same name/email/phoneNumber
-        if (supplierByNameOrEmailOrPhoneNumber.isPresent()) {
-            throw new DuplicatedSupplierException(id.toString());
-        }
-
-        // Saving changes
         supplier.setName(supplierDTO.name());
         supplier.setEmail(supplierDTO.email());
         supplier.setPhoneNumber(supplierDTO.phoneNumber());
@@ -104,5 +88,29 @@ public class SupplierService {
                 supplierDTO.description(),
                 supplierDTO.active()
         );
+    }
+
+    private void ensureSupplierDetailsDoesNotExist(long supplierId, String name, String email, String phoneNumber) {
+        Optional<Supplier> supplierByName = supplierId > 0 ?
+                this.supplierRepository.findByNameExcludingSupplierId(supplierId, name)
+                : this.supplierRepository.findByName(name);
+        Optional<Supplier> supplierByEmail = supplierId > 0 ?
+                this.supplierRepository.findByEmailExcludingSupplierId(supplierId, email)
+                : this.supplierRepository.findByEmail(email);
+        Optional<Supplier> supplierByPhoneNumber = supplierId > 0 ?
+                this.supplierRepository.findByPhoneNumberExcludingSupplierId(supplierId, phoneNumber)
+                : this.supplierRepository.findByPhoneNumber(phoneNumber);
+
+        if (supplierByName.isPresent()) {
+            throw new DuplicatedSupplierDetailsException(String.format(ApplicationMessages.SUPPLIER_NAME_EXISTS, name));
+        }
+
+        if (supplierByEmail.isPresent()) {
+            throw new DuplicatedSupplierDetailsException(String.format(ApplicationMessages.SUPPLIER_EMAIL_EXISTS, email));
+        }
+
+        if (supplierByPhoneNumber.isPresent()) {
+            throw new DuplicatedSupplierDetailsException(String.format(ApplicationMessages.SUPPLIER_PHONE_NUMBER_EXISTS, phoneNumber));
+        }
     }
 }

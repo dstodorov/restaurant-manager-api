@@ -1,6 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedSupplierException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedSupplierDetailsException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.SupplierNotFoundException;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.Supplier;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
@@ -231,7 +231,7 @@ class SupplierServiceTest {
         )).thenReturn(Optional.of(supplier));
 
         // Act and Assert
-        assertThrows(DuplicatedSupplierException.class, () -> {
+        assertThrows(DuplicatedSupplierDetailsException.class, () -> {
             supplierService.updateSupplier(validSupplierId, supplierDTO);
         });
 
