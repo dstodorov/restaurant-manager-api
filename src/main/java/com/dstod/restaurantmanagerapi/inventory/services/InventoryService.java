@@ -143,7 +143,7 @@ public class InventoryService {
 
         if (inventoryOptional.isEmpty()) {
 
-            return String.format(ApplicationMessages.PRODUCT_MISSING, product.getId(), product.getName());
+            return String.format(ApplicationMessages.INVENTORY_PRODUCT_MISSING, product.getId(), product.getName());
         }
 
         Inventory inventory = inventoryOptional.get();

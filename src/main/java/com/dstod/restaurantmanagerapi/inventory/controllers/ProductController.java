@@ -28,7 +28,10 @@ public class ProductController {
     @Operation(summary = "Get list of all products")
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        return this.productService.getAllProducts().map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return this.productService
+                .getAllProducts()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @Operation(summary = "Get product info by given ID")
