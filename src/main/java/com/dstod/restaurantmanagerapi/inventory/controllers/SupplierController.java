@@ -35,10 +35,6 @@ public class SupplierController {
     public ResponseEntity<SupplierDTO> addSupplier(@RequestBody @Valid SupplierDTO supplierDTO, UriComponentsBuilder uriComponentsBuilder) {
         Long supplierId = this.supplierService.createSupplier(supplierDTO);
 
-        if (supplierId == -1) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
         return ResponseEntity.created(uriComponentsBuilder.path("/api/v1/suppliers/{id}").build(supplierId)).build();
     }
 

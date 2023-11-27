@@ -1,5 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.controllers;
 
+import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
 import com.dstod.restaurantmanagerapi.inventory.services.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,31 +34,23 @@ public class ProductController {
     @Operation(summary = "Get product info by given ID")
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") Long id) {
-        Optional<ProductDTO> product = this.productService.getProduct(id);
-
-        return product.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return ResponseEntity.ok(this.productService.getProduct(id));
     }
 
     @Operation(summary = "Create new product")
     @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@RequestBody @Valid ProductDTO product, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<SuccessResponse> createProduct(@RequestBody @Valid ProductDTO product) {
+        SuccessResponse response = this.productService.createProduct(product);
 
-        Long productId = this.productService.createProduct(product);
-
-        if (productId == -1) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/v1/products/{id}").build(productId)).build();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Update product by given ID")
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductDTO productDTO) {
-        ProductDTO updatedProduct = this.productService.updateProduct(id, productDTO);
+    public ResponseEntity<SuccessResponse> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductDTO productDTO) {
+        SuccessResponse response = this.productService.updateProduct(id, productDTO);
 
-        return ResponseEntity.ok(updatedProduct);
+        return ResponseEntity.ok(response);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

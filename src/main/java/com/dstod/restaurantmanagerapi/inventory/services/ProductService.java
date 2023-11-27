@@ -3,13 +3,16 @@ package com.dstod.restaurantmanagerapi.inventory.services;
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedProductException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
+import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.Product;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.enums.ProductCategory;
 import com.dstod.restaurantmanagerapi.inventory.models.enums.UnitType;
 import com.dstod.restaurantmanagerapi.inventory.repositories.ProductRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +25,12 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Long createProduct(ProductDTO newProduct) {
+    public SuccessResponse createProduct(ProductDTO newProduct) {
 
         Optional<Product> productByName = this.productRepository.findByName(newProduct.name());
 
         if (productByName.isPresent()) {
-            return -1L;
+            throw new DuplicatedProductException(String.format(ApplicationMessages.DUPLICATED_PRODUCT, newProduct.name()));
         }
 
         Product product = new Product(
@@ -37,12 +40,19 @@ public class ProductService {
                 UnitType.valueOf(newProduct.unit())
         );
 
+        Product savedProduct = this.productRepository.save(product);
 
-        return this.productRepository.save(product).getId();
+        ProductDTO savedProductDto = mapToProductDTO(savedProduct);
+
+        return new SuccessResponse("Successfully added product!", new Date(), savedProductDto);
     }
 
-    public Optional<ProductDTO> getProduct(Long id) {
-        return this.productRepository.findById(id).map(this::mapToProductDTO);
+    public ProductDTO getProduct(Long id) {
+        return this.productRepository
+                .findById(id)
+                .map(this::mapToProductDTO)
+                .orElseThrow(() -> new ProductNotFoundException(String.format("Product with id %d was not found!", id))
+        );
     }
 
     public Optional<List<ProductDTO>> getAllProducts() {
@@ -58,7 +68,7 @@ public class ProductService {
         );
     }
 
-    public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+    public SuccessResponse updateProduct(Long id, ProductDTO productDTO) {
         // Check if product is found, if not, throw exception
         this.productRepository
                 .findById(id)
@@ -80,11 +90,8 @@ public class ProductService {
 
         Product savedProduct = this.productRepository.save(product);
 
-        return new ProductDTO(
-                id,
-                savedProduct.getName(),
-                savedProduct.getCategory().name(),
-                savedProduct.getUnit().name()
-        );
+        ProductDTO savedProductDto = mapToProductDTO(savedProduct);
+
+        return new SuccessResponse("Successfully updated product", new Date(), savedProductDto);
     }
 }
