@@ -1,9 +1,6 @@
 package com.dstod.restaurantmanagerapi.common.exceptions;
 
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedProductException;
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedSupplierDetailsException;
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.SupplierNotFoundException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserDetailsDuplicationException;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserNotFoundException;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserRoleDoesNotExistException;
@@ -21,13 +18,12 @@ import java.util.List;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-//    @ExceptionHandler(ProductNotFoundException.class)
-//    public ResponseEntity<FailureResponse> handleNotExistingProductException(ProductNotFoundException exception) {
-//        //return sendResponseMessage("Inventory", exception.getMessage(), HttpStatus.NOT_FOUND);
-//        return handle(exception);
-//    }
-
-    @ExceptionHandler({ProductNotFoundException.class, DuplicatedProductException.class})
+    @ExceptionHandler({
+            ProductNotFoundException.class,
+            DuplicatedProductException.class,
+            ProductCategoryNotFoundException.class,
+            ProductUnitNotFoundException.class
+    })
     public ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
         return handle(exception);
     }
@@ -69,7 +65,11 @@ public class GlobalExceptionHandler {
         if (exception instanceof ProductNotFoundException) {
             return new ResponseEntity<>(new FailureResponse("Not existing product", new Date(), errors), HttpStatus.NOT_FOUND);
         } else if (exception instanceof DuplicatedProductException) {
-            return new ResponseEntity<>(new FailureResponse("Duplicated product", new Date(), errors), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new FailureResponse("Duplicated product", new Date(), errors), HttpStatus.CONFLICT);
+        }else if (exception instanceof ProductUnitNotFoundException) {
+            return new ResponseEntity<>(new FailureResponse("Product details error", new Date(), errors), HttpStatus.UNPROCESSABLE_ENTITY);
+        }else if (exception instanceof ProductCategoryNotFoundException) {
+            return new ResponseEntity<>(new FailureResponse("Product details error", new Date(), errors), HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return null;
     }

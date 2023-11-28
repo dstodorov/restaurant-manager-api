@@ -79,7 +79,7 @@ public class InventoryService {
                 inventoryProduct.getSupplier().getPhoneNumber()
         );
 
-        ProductDTO productDTO = new ProductDTO(
+        ProductDto productDTO = new ProductDto(
                 inventoryProduct.getProduct().getId(),
                 inventoryProduct.getProduct().getName(),
                 inventoryProduct.getProduct().getCategory().name(),

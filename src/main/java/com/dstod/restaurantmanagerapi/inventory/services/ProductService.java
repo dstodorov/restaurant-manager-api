@@ -7,11 +7,10 @@ import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedProd
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.Product;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDTO;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDto;
 import com.dstod.restaurantmanagerapi.inventory.models.enums.ProductCategory;
 import com.dstod.restaurantmanagerapi.inventory.models.enums.UnitType;
 import com.dstod.restaurantmanagerapi.inventory.repositories.ProductRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -27,50 +26,50 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public SuccessResponse createProduct(ProductDTO newProduct) {
+    public SuccessResponse createProduct(ProductDto productDto) {
 
-        Optional<Product> productByName = this.productRepository.findByName(newProduct.name());
+        Optional<Product> productByName = this.productRepository.findByName(productDto.name());
 
         if (productByName.isPresent()) {
-            throw new DuplicatedProductException(String.format(ApplicationMessages.DUPLICATED_PRODUCT, newProduct.name()));
+            throw new DuplicatedProductException(String.format(ApplicationMessages.DUPLICATED_PRODUCT, productDto.name()));
         }
 
-        if(!ProductCategory.isValidCategory(newProduct.category())) {
-            throw new ProductCategoryNotFoundException(String.format(ApplicationMessages.PRODUCT_WRONG_CATEGORY, newProduct.category()));
+        if (!ProductCategory.isValidCategory(productDto.category())) {
+            throw new ProductCategoryNotFoundException(String.format(ApplicationMessages.PRODUCT_WRONG_CATEGORY, productDto.category()));
         }
 
-        if(!UnitType.isValidUnit(newProduct.unit())) {
-            throw new ProductUnitNotFoundException(String.format(ApplicationMessages.PRODUCT_WRONG_UNITS, newProduct.unit()));
+        if (!UnitType.isValidUnit(productDto.unit())) {
+            throw new ProductUnitNotFoundException(String.format(ApplicationMessages.PRODUCT_WRONG_UNITS, productDto.unit()));
         }
 
-        Product product = new Product(
+        Product productEntity = new Product(
                 0L,
-                newProduct.name(),
-                ProductCategory.valueOf(newProduct.category().toUpperCase()),
-                UnitType.valueOf(newProduct.unit())
+                productDto.name(),
+                ProductCategory.valueOf(productDto.category().toUpperCase()),
+                UnitType.valueOf(productDto.unit())
         );
 
-        Product savedProduct = this.productRepository.save(product);
+        Product savedProduct = this.productRepository.save(productEntity);
 
-        ProductDTO savedProductDto = mapToProductDTO(savedProduct);
+        ProductDto savedProductDto = mapToProductDTO(savedProduct);
 
         return new SuccessResponse(ApplicationMessages.PRODUCT_SUCCESSFULLY_ADDED, new Date(), savedProductDto);
     }
 
-    public ProductDTO getProduct(Long id) {
+    public ProductDto getProduct(Long id) {
         return this.productRepository
                 .findById(id)
                 .map(this::mapToProductDTO)
                 .orElseThrow(() ->
                         new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, id))
-        );
+                );
     }
 
-    public Optional<List<ProductDTO>> getAllProducts() {
+    public Optional<List<ProductDto>> getAllProducts() {
         return Optional.of(this.productRepository.findAll().stream().map(this::mapToProductDTO).toList());
     }
 
-    public SuccessResponse updateProduct(Long id, ProductDTO productDTO) {
+    public SuccessResponse updateProduct(Long id, ProductDto productDTO) {
 
         this.productRepository
                 .findById(id)
@@ -90,13 +89,13 @@ public class ProductService {
 
         Product savedProduct = this.productRepository.save(product);
 
-        ProductDTO savedProductDto = mapToProductDTO(savedProduct);
+        ProductDto savedProductDto = mapToProductDTO(savedProduct);
 
         return new SuccessResponse("Successfully updated product", new Date(), savedProductDto);
     }
 
-    private ProductDTO mapToProductDTO(Product product) {
-        return new ProductDTO(
+    private ProductDto mapToProductDTO(Product product) {
+        return new ProductDto(
                 product.getId(),
                 product.getName(),
                 product.getCategory().name(),

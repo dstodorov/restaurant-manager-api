@@ -7,7 +7,7 @@ public record InventoryProductInfoDTO(
         Long id,
         Double currentQuantity,
         SupplierInfoDTO supplier,
-        ProductDTO product,
+        ProductDto product,
         BigDecimal batchPrice,
         LocalDate expiryDate,
         Boolean wasted
