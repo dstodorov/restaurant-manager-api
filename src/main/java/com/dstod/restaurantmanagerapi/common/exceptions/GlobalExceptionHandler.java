@@ -1,10 +1,6 @@
 package com.dstod.restaurantmanagerapi.common.exceptions;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
-import com.dstod.restaurantmanagerapi.common.exceptions.users.UserDetailsDuplicationException;
-import com.dstod.restaurantmanagerapi.common.exceptions.users.UserNotFoundException;
-import com.dstod.restaurantmanagerapi.common.exceptions.users.UserRoleDoesNotExistException;
-import com.dstod.restaurantmanagerapi.common.models.ErrorResponse;
 import com.dstod.restaurantmanagerapi.common.models.FailureResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,59 +14,71 @@ import java.util.List;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({
-            ProductNotFoundException.class,
-            DuplicatedProductException.class,
-            ProductCategoryNotFoundException.class,
-            ProductUnitNotFoundException.class
-    })
-    public ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
-        return handle(exception);
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<FailureResponse> handleRuntimeException(RuntimeException exception) {
+        return handleException(exception);
     }
+//
+//    @ExceptionHandler(UserDetailsDuplicationException.class)
+//    public ResponseEntity<ErrorResponse> handleUserDetailsDuplicationException(UserDetailsDuplicationException exception) {
+//        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.CONFLICT);
+//    }
+//
+//    @ExceptionHandler(UserNotFoundException.class)
+//    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException exception) {
+//        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.NOT_FOUND);
+//    }
+//
+//    @ExceptionHandler(UserRoleDoesNotExistException.class)
+//    public ResponseEntity<ErrorResponse> handleUserRoleDoesNotExistException(UserRoleDoesNotExistException exception) {
+//        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.NOT_FOUND);
+//    }
+//
+//    private ResponseEntity<ErrorResponse> sendResponseMessage(String module, String message, HttpStatus status) {
+//        return new ResponseEntity<>(new ErrorResponse(module, message), status);
+//    }
 
-    @ExceptionHandler(UserDetailsDuplicationException.class)
-    public ResponseEntity<ErrorResponse> handleUserDetailsDuplicationException(UserDetailsDuplicationException exception) {
-        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException exception) {
-        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(UserRoleDoesNotExistException.class)
-    public ResponseEntity<ErrorResponse> handleUserRoleDoesNotExistException(UserRoleDoesNotExistException exception) {
-        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(DuplicatedSupplierDetailsException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicatedSupplierDetailsException(DuplicatedSupplierDetailsException exception) {
-        return sendResponseMessage("Inventory", exception.getMessage(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(SupplierNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleSupplierNotFoundException(SupplierNotFoundException exception) {
-        return sendResponseMessage("Inventory", exception.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    private ResponseEntity<ErrorResponse> sendResponseMessage(String module, String message, HttpStatus status) {
-        return new ResponseEntity<>(new ErrorResponse(module, message), status);
-    }
-
-    private ResponseEntity<FailureResponse> handle(RuntimeException exception) {
+    private ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
         List<String> errors = new ArrayList<>();
-
         errors.add(exception.getMessage());
 
+        String specificMessage = getSpecificMessage(exception);
+        HttpStatus specificStatus = getSpecificStatus(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        if (specificMessage != null) {
+            return new ResponseEntity<>(new FailureResponse(specificMessage, new Date(), errors), specificStatus);
+        }
+
+        return new ResponseEntity<>(new FailureResponse("Unexpected error", new Date(), errors), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private String getSpecificMessage(RuntimeException exception) {
         if (exception instanceof ProductNotFoundException) {
-            return new ResponseEntity<>(new FailureResponse("Not existing product", new Date(), errors), HttpStatus.NOT_FOUND);
+            return "Product not found";
         } else if (exception instanceof DuplicatedProductException) {
-            return new ResponseEntity<>(new FailureResponse("Duplicated product", new Date(), errors), HttpStatus.CONFLICT);
-        }else if (exception instanceof ProductUnitNotFoundException) {
-            return new ResponseEntity<>(new FailureResponse("Product details error", new Date(), errors), HttpStatus.UNPROCESSABLE_ENTITY);
-        }else if (exception instanceof ProductCategoryNotFoundException) {
-            return new ResponseEntity<>(new FailureResponse("Product details error", new Date(), errors), HttpStatus.UNPROCESSABLE_ENTITY);
+            return "Duplicated product";
+        } else if (exception instanceof ProductUnitNotFoundException) {
+            return "Product details error";
+        } else if (exception instanceof ProductCategoryNotFoundException) {
+            return "Product details error";
+        } else if (exception instanceof SupplierNotFoundException) {
+            return "Supplier not found";
+        } else if (exception instanceof DuplicatedSupplierDetailsException) {
+            return "Supplier details duplication";
         }
         return null;
+    }
+
+    private HttpStatus getSpecificStatus(RuntimeException exception, HttpStatus defaultStatus) {
+        if (exception instanceof ProductNotFoundException) {
+            return HttpStatus.NOT_FOUND;
+        } else if (exception instanceof DuplicatedProductException || exception instanceof DuplicatedSupplierDetailsException) {
+            return HttpStatus.CONFLICT;
+        } else if (exception instanceof ProductUnitNotFoundException || exception instanceof ProductCategoryNotFoundException) {
+            return HttpStatus.UNPROCESSABLE_ENTITY;
+        } else if (exception instanceof SupplierNotFoundException) {
+            return HttpStatus.NOT_FOUND;
+        }
+        return defaultStatus;
     }
 }

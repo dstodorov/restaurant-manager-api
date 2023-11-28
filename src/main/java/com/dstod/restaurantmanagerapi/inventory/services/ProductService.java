@@ -28,32 +28,17 @@ public class ProductService {
 
     public SuccessResponse createProduct(ProductDto productDto) {
 
-        Optional<Product> productByName = this.productRepository.findByName(productDto.name());
+        ensureProductDetailsDoesNotExist(productDto.name());
 
-        if (productByName.isPresent()) {
-            throw new DuplicatedProductException(String.format(ApplicationMessages.DUPLICATED_PRODUCT, productDto.name()));
-        }
+        validateProductData(productDto);
 
-        if (!ProductCategory.isValidCategory(productDto.category())) {
-            throw new ProductCategoryNotFoundException(String.format(ApplicationMessages.PRODUCT_WRONG_CATEGORY, productDto.category()));
-        }
-
-        if (!UnitType.isValidUnit(productDto.unit())) {
-            throw new ProductUnitNotFoundException(String.format(ApplicationMessages.PRODUCT_WRONG_UNITS, productDto.unit()));
-        }
-
-        Product productEntity = new Product(
-                0L,
-                productDto.name(),
-                ProductCategory.valueOf(productDto.category().toUpperCase()),
-                UnitType.valueOf(productDto.unit())
-        );
+        Product productEntity = mapToProduct(productDto);
 
         Product savedProduct = this.productRepository.save(productEntity);
 
         ProductDto savedProductDto = mapToProductDTO(savedProduct);
 
-        return new SuccessResponse(ApplicationMessages.PRODUCT_SUCCESSFULLY_ADDED, new Date(), savedProductDto);
+        return new SuccessResponse(ApplicationMessages.PRODUCT_SUCCESSFULLY_CREATED, new Date(), savedProductDto);
     }
 
     public ProductDto getProduct(Long id) {
@@ -71,7 +56,7 @@ public class ProductService {
 
     public SuccessResponse updateProduct(Long id, ProductDto productDTO) {
 
-        this.productRepository
+        Product product = this.productRepository
                 .findById(id)
                 .orElseThrow(() ->
                         new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, id)));
@@ -80,18 +65,15 @@ public class ProductService {
             throw new DuplicatedProductException(id.toString());
         }
 
-        Product product = new Product(
-                id,
-                productDTO.name(),
-                ProductCategory.valueOf(productDTO.category()),
-                UnitType.valueOf(productDTO.unit())
-        );
+        product.setName(productDTO.name());
+        product.setCategory(ProductCategory.valueOf(productDTO.category().toUpperCase()));
+        product.setUnit(UnitType.valueOf(productDTO.unit().toUpperCase()));
 
         Product savedProduct = this.productRepository.save(product);
 
         ProductDto savedProductDto = mapToProductDTO(savedProduct);
 
-        return new SuccessResponse("Successfully updated product", new Date(), savedProductDto);
+        return new SuccessResponse(ApplicationMessages.PRODUCT_SUCCESSFULLY_UPDATED, new Date(), savedProductDto);
     }
 
     private ProductDto mapToProductDTO(Product product) {
@@ -100,6 +82,34 @@ public class ProductService {
                 product.getName(),
                 product.getCategory().name(),
                 product.getUnit().name()
+        );
+    }
+
+    private void ensureProductDetailsDoesNotExist(String productName) {
+        Optional<Product> productByName = this.productRepository.findByName(productName);
+
+        if (productByName.isPresent()) {
+            throw new DuplicatedProductException(String.format(ApplicationMessages.DUPLICATED_PRODUCT, productName));
+        }
+    }
+
+    private void validateProductData(ProductDto productDto) {
+
+        if (!ProductCategory.isValidCategory(productDto.category())) {
+            throw new ProductCategoryNotFoundException(String.format(ApplicationMessages.PRODUCT_WRONG_CATEGORY, productDto.category()));
+        }
+
+        if (!UnitType.isValidUnit(productDto.unit())) {
+            throw new ProductUnitNotFoundException(String.format(ApplicationMessages.PRODUCT_WRONG_UNITS, productDto.unit()));
+        }
+    }
+
+    private Product mapToProduct(ProductDto productDto) {
+        return new Product(
+                0L,
+                productDto.name(),
+                ProductCategory.valueOf(productDto.category().toUpperCase()),
+                UnitType.valueOf(productDto.unit())
         );
     }
 }

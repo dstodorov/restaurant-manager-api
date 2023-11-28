@@ -3,11 +3,13 @@ package com.dstod.restaurantmanagerapi.inventory.services;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedSupplierDetailsException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.SupplierNotFoundException;
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
+import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.Supplier;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDTO;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.SupplierDto;
 import com.dstod.restaurantmanagerapi.inventory.repositories.SupplierRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,55 +22,58 @@ public class SupplierService {
         this.supplierRepository = supplierRepository;
     }
 
-    public Long createSupplier(SupplierDTO supplierDTO) {
+    public SuccessResponse createSupplier(SupplierDto supplierDto) {
 
-        ensureSupplierDetailsDoesNotExist(0, supplierDTO.name(), supplierDTO.email(), supplierDTO.phoneNumber());
+        ensureSupplierDetailsDoesNotExist(0, supplierDto.name(), supplierDto.email(), supplierDto.phoneNumber());
 
-        Supplier supplier = mapToSupplier(supplierDTO);
+        Supplier supplierEntity = mapToSupplier(supplierDto);
 
-        return this.supplierRepository.save(supplier).getId();
+        Supplier savedSupplier = this.supplierRepository.save(supplierEntity);
+
+        return new SuccessResponse(ApplicationMessages.SUPPLIER_SUCCESSFULLY_CREATED, new Date(), savedSupplier);
+
     }
 
-    public Optional<SupplierDTO> getSupplier(Long id) {
-        return this.supplierRepository.findById(id).map(this::mapToSupplierDTO);
+    public SupplierDto getSupplier(Long id) {
+        return this.supplierRepository
+                .findById(id)
+                .map(this::mapToSupplierDto)
+                .orElseThrow(() ->
+                        new SupplierNotFoundException(String.format(ApplicationMessages.SUPPLIER_NOT_FOUND, id))
+                );
     }
 
-    public SupplierDTO updateSupplier(Long id, SupplierDTO supplierDTO) {
+    public SuccessResponse updateSupplier(Long id, SupplierDto supplierDto) {
         Supplier supplier = this.supplierRepository
                 .findById(id)
                 .orElseThrow(() -> new SupplierNotFoundException(String.format(ApplicationMessages.SUPPLIER_NOT_FOUND, id)));
 
-        ensureSupplierDetailsDoesNotExist(id, supplierDTO.name(), supplierDTO.email(), supplierDTO.phoneNumber());
+        ensureSupplierDetailsDoesNotExist(id, supplierDto.name(), supplierDto.email(), supplierDto.phoneNumber());
 
-        supplier.setName(supplierDTO.name());
-        supplier.setEmail(supplierDTO.email());
-        supplier.setPhoneNumber(supplierDTO.phoneNumber());
-        supplier.setDescription(supplierDTO.description());
-        supplier.setActive(supplierDTO.active());
+        supplier.setName(supplierDto.name());
+        supplier.setEmail(supplierDto.email());
+        supplier.setPhoneNumber(supplierDto.phoneNumber());
+        supplier.setDescription(supplierDto.description());
+        supplier.setActive(supplierDto.active());
 
-        this.supplierRepository.save(supplier);
+        Supplier savedSupplier = this.supplierRepository.save(supplier);
 
-        return new SupplierDTO(
-                id,
-                supplierDTO.name(),
-                supplierDTO.phoneNumber(),
-                supplierDTO.email(),
-                supplierDTO.description(),
-                supplier.getActive()
-        );
+        SupplierDto savedSupplierDto = mapToSupplierDto(savedSupplier);
+
+        return new SuccessResponse(ApplicationMessages.SUPPLIER_SUCCESSFULLY_UPDATED, new Date(), savedSupplierDto);
     }
 
-    public Optional<List<SupplierDTO>> getAllSuppliers() {
-        return Optional.of(this.supplierRepository.findAll().stream().map(this::mapToSupplierDTO).toList());
+    public Optional<List<SupplierDto>> getAllSuppliers() {
+        return Optional.of(this.supplierRepository.findAll().stream().map(this::mapToSupplierDto).toList());
     }
 
 //    public void changeStatus() {
 //
 //    }
 
-    private SupplierDTO mapToSupplierDTO(Supplier supplier) {
+    private SupplierDto mapToSupplierDto(Supplier supplier) {
 
-        return new SupplierDTO(
+        return new SupplierDto(
                 supplier.getId(),
                 supplier.getName(),
                 supplier.getPhoneNumber(),
@@ -78,7 +83,7 @@ public class SupplierService {
         );
     }
 
-    private Supplier mapToSupplier(SupplierDTO supplierDTO) {
+    private Supplier mapToSupplier(SupplierDto supplierDTO) {
 
         return new Supplier(
                 0L,

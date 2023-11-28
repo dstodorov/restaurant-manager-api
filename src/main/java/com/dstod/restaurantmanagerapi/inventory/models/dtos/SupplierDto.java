@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record SupplierDTO(
+public record SupplierDto(
         Long id,
         @NotNull(message = "Missing vendor name")
         @Size(min = 2, max = 20)

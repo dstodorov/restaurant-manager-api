@@ -2,9 +2,10 @@ package com.dstod.restaurantmanagerapi.common.messages;
 
 public interface ApplicationMessages {
     String PRODUCT_WASTED = "Product with id %d (%s) is wasted";
-    String PRODUCT_WRONG_CATEGORY = "Product category %s is not valid!";
-    String PRODUCT_WRONG_UNITS = "Product unit %s is not valid!";
-    String PRODUCT_SUCCESSFULLY_ADDED = "Successfully added product!";
+    String PRODUCT_WRONG_CATEGORY = "Product category %s is not valid";
+    String PRODUCT_WRONG_UNITS = "Product unit %s is not valid";
+    String PRODUCT_SUCCESSFULLY_CREATED = "Successfully created product";
+    String PRODUCT_SUCCESSFULLY_UPDATED = "Successfully updated product";
     String INVENTORY_PRODUCT_MISSING = "Product with %d (%s) is missing in the inventory";
     String PRODUCT_OUT_OF_STOCK = "Product with id %d (%s) is out of stock";
     String RECIPE_NOT_FOUND = "Recipe with id %d, not found";
@@ -19,4 +20,6 @@ public interface ApplicationMessages {
     String SUPPLIER_EMAIL_EXISTS = "Supplier with email %s already exist";
     String SUPPLIER_PHONE_NUMBER_EXISTS = "Supplier with phone number %s already exist";
     String SUPPLIER_NOT_FOUND = "Supplier with id %d was not found";
+    String SUPPLIER_SUCCESSFULLY_CREATED = "Successfully created product";
+    String SUPPLIER_SUCCESSFULLY_UPDATED = "Successfully updated product";
 }

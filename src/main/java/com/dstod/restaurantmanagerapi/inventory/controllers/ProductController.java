@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
-@Tag(name = "Manage products APIs")
+@Tag(name = "Manage product APIs")
 public class ProductController {
     private final ProductService productService;
 
@@ -23,13 +23,10 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @Operation(summary = "Get list of all products")
-    @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
-        return this.productService
-                .getAllProducts()
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    @Operation(summary = "Create new product")
+    @PostMapping
+    public ResponseEntity<SuccessResponse> createProduct(@RequestBody @Valid ProductDto product) {
+        return ResponseEntity.ok(this.productService.createProduct(product));
     }
 
     @Operation(summary = "Get product info by given ID")
@@ -38,19 +35,19 @@ public class ProductController {
         return ResponseEntity.ok(this.productService.getProduct(id));
     }
 
-    @Operation(summary = "Create new product")
-    @PostMapping
-    public ResponseEntity<SuccessResponse> createProduct(@RequestBody @Valid ProductDto product) {
-        SuccessResponse response = this.productService.createProduct(product);
-
-        return ResponseEntity.ok(response);
+    @Operation(summary = "Get list of all products")
+    @GetMapping
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        return this.productService
+                .getAllProducts()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .build());
     }
 
     @Operation(summary = "Update product by given ID")
     @PutMapping("/{id}")
-    public ResponseEntity<SuccessResponse> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductDto productDTO) {
-        SuccessResponse response = this.productService.updateProduct(id, productDTO);
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<SuccessResponse> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductDto productDto) {
+        return ResponseEntity.ok(this.productService.updateProduct(id, productDto));
     }
 }
