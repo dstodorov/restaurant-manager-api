@@ -1,6 +1,8 @@
 package com.dstod.restaurantmanagerapi.common.exceptions;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
+import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
+import com.dstod.restaurantmanagerapi.common.models.ErrorDetails;
 import com.dstod.restaurantmanagerapi.common.models.FailureResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,43 +44,23 @@ public class GlobalExceptionHandler {
         List<String> errors = new ArrayList<>();
         errors.add(exception.getMessage());
 
-        String specificMessage = getSpecificMessage(exception);
-        HttpStatus specificStatus = getSpecificStatus(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorDetails errorDetails = getErrorDetails(exception);
 
-        if (specificMessage != null) {
-            return new ResponseEntity<>(new FailureResponse(specificMessage, new Date(), errors), specificStatus);
-        }
-
-        return new ResponseEntity<>(new FailureResponse("Unexpected error", new Date(), errors), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new FailureResponse(errorDetails.message(), new Date(), errors), errorDetails.status());
     }
 
-    private String getSpecificMessage(RuntimeException exception) {
+    private ErrorDetails getErrorDetails(RuntimeException exception) {
         if (exception instanceof ProductNotFoundException) {
-            return "Product not found";
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
         } else if (exception instanceof DuplicatedProductException) {
-            return "Duplicated product";
-        } else if (exception instanceof ProductUnitNotFoundException) {
-            return "Product details error";
-        } else if (exception instanceof ProductCategoryNotFoundException) {
-            return "Product details error";
-        } else if (exception instanceof SupplierNotFoundException) {
-            return "Supplier not found";
-        } else if (exception instanceof DuplicatedSupplierDetailsException) {
-            return "Supplier details duplication";
-        }
-        return null;
-    }
-
-    private HttpStatus getSpecificStatus(RuntimeException exception, HttpStatus defaultStatus) {
-        if (exception instanceof ProductNotFoundException) {
-            return HttpStatus.NOT_FOUND;
-        } else if (exception instanceof DuplicatedProductException || exception instanceof DuplicatedSupplierDetailsException) {
-            return HttpStatus.CONFLICT;
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_DUPLICATED_PRODUCT, HttpStatus.CONFLICT);
         } else if (exception instanceof ProductUnitNotFoundException || exception instanceof ProductCategoryNotFoundException) {
-            return HttpStatus.UNPROCESSABLE_ENTITY;
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_PRODUCT_DETAILS_ERROR, HttpStatus.UNPROCESSABLE_ENTITY);
         } else if (exception instanceof SupplierNotFoundException) {
-            return HttpStatus.NOT_FOUND;
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_SUPPLIER_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else if (exception instanceof DuplicatedSupplierDetailsException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_DUPLICATED_SUPPLIER, HttpStatus.CONFLICT);
         }
-        return defaultStatus;
+        return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
