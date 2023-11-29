@@ -22,10 +22,12 @@ public interface ApplicationMessages {
     String SUPPLIER_NOT_FOUND = "Supplier with id %d was not found";
     String SUPPLIER_SUCCESSFULLY_CREATED = "Successfully created product";
     String SUPPLIER_SUCCESSFULLY_UPDATED = "Successfully updated product";
+    String MISMATCHED_OBJECT_EXCEPTION = "Object id %d does not match object details in the update request";
     String GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND = "Product not found";
     String GLOBAL_EXCEPTION_DUPLICATED_PRODUCT = "Duplicated product";
     String GLOBAL_EXCEPTION_PRODUCT_DETAILS_ERROR = "Product details error";
     String GLOBAL_EXCEPTION_SUPPLIER_NOT_FOUND = "Supplier not found";
     String GLOBAL_EXCEPTION_DUPLICATED_SUPPLIER = "Duplicated supplier";
     String GLOBAL_EXCEPTION_UNEXPECTED_ERROR = "Unexpected error";
+    String GLOBAL_EXCEPTION_MISMATCH_ID = "Mismatched object ID";
 }

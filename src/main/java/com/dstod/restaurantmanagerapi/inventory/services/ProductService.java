@@ -1,10 +1,7 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductCategoryNotFoundException;
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductUnitNotFoundException;
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.DuplicatedProductException;
-import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.Product;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.ProductDto;
@@ -62,9 +59,9 @@ public class ProductService {
                         new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, id)));
 
         if (productRepository.findByName(productDTO.name()).filter(p -> !p.getId().equals(id)).isPresent()) {
-            throw new DuplicatedProductException(id.toString());
+            throw new MismatchedObjectIdException(String.format(ApplicationMessages.MISMATCHED_OBJECT_EXCEPTION, id));
         }
-
+//
         product.setName(productDTO.name());
         product.setCategory(ProductCategory.valueOf(productDTO.category().toUpperCase()));
         product.setUnit(UnitType.valueOf(productDTO.unit().toUpperCase()));

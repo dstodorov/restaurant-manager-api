@@ -60,6 +60,8 @@ public class GlobalExceptionHandler {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_SUPPLIER_NOT_FOUND, HttpStatus.NOT_FOUND);
         } else if (exception instanceof DuplicatedSupplierDetailsException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_DUPLICATED_SUPPLIER, HttpStatus.CONFLICT);
+        }else if (exception instanceof MismatchedObjectIdException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISMATCH_ID, HttpStatus.CONFLICT);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
