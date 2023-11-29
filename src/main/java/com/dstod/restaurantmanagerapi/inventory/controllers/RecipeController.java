@@ -1,6 +1,7 @@
 package com.dstod.restaurantmanagerapi.inventory.controllers;
 
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeDTO;
+import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeDto;
 import com.dstod.restaurantmanagerapi.inventory.services.RecipeService;
 
 import com.dstod.restaurantmanagerapi.common.models.ErrorMessage;
@@ -32,60 +33,27 @@ public class RecipeController {
 
     @Operation(summary = "Create new recipe")
     @PostMapping
-    public ResponseEntity<RecipeDTO> createRecipe(@Valid @RequestBody RecipeDTO recipeDTO, UriComponentsBuilder uriComponentsBuilder) {
-
-        Long recipeId = this.recipeService.createRecipe(recipeDTO);
-
-        if (recipeId == -1L) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/v1/recipes/{id}").build(recipeId)).build();
+    public ResponseEntity<SuccessResponse> createRecipe(@Valid @RequestBody RecipeDto recipeDTO) {
+        return ResponseEntity.ok(this.recipeService.createRecipe(recipeDTO));
     }
 
     @Operation(summary = "Get recipe info by given ID")
     @GetMapping("/{id}")
-    public ResponseEntity<RecipeDTO> getRecipe(@PathVariable Long id) {
-
-        Optional<RecipeDTO> recipe = this.recipeService.getRecipe(id);
-
-        return recipe
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .build());
+    public ResponseEntity<RecipeDto> getRecipe(@PathVariable Long id) {
+        return ResponseEntity.ok(this.recipeService.getRecipe(id));
     }
 
     @Operation(summary = "Get list of all recipes")
     @GetMapping
-    public ResponseEntity<List<RecipeDTO>> getAllRecipes() {
-        Optional<List<RecipeDTO>> allRecipes = this.recipeService.getAllRecipes();
+    public ResponseEntity<List<RecipeDto>> getAllRecipes() {
+        Optional<List<RecipeDto>> allRecipes = this.recipeService.getAllRecipes();
 
         return allRecipes.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @Operation(summary = "Update recipe by given ID")
     @PutMapping("/{id}")
-    public ResponseEntity<RecipeDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody RecipeDTO recipeDTO) {
-        RecipeDTO recipe = this.recipeService.updateRecipe(id, recipeDTO);
-
-        return ResponseEntity.ok(recipe);
-    }
-
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<String> handleValidationExceptions(BindingResult bindingResult) {
-
-        List<String> errors = new ArrayList<>();
-
-        bindingResult.getAllErrors().forEach(e -> errors.add(new ErrorMessage(
-                ((FieldError) e).getField(),
-                e.getDefaultMessage()
-        ).toString()));
-
-        String responseBody = String.format("{\"errors\" : [%s]}", String.join(", ", errors));
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(responseBody);
+    public ResponseEntity<SuccessResponse> updateProduct(@PathVariable Long id, @Valid @RequestBody RecipeDto recipeDTO) {
+        return ResponseEntity.ok(this.recipeService.updateRecipe(id, recipeDTO));
     }
 }

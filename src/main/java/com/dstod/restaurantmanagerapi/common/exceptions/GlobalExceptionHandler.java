@@ -62,6 +62,10 @@ public class GlobalExceptionHandler {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_DUPLICATED_SUPPLIER, HttpStatus.CONFLICT);
         }else if (exception instanceof MismatchedObjectIdException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISMATCH_ID, HttpStatus.CONFLICT);
+        }else if (exception instanceof RecipeCategoryNotFoundException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_RECIPE_DETAILS_ERROR, HttpStatus.CONFLICT);
+        }else if (exception instanceof RecipeNotFoundException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_RECIPE_NOT_FOUND, HttpStatus.CONFLICT);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }

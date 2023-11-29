@@ -48,23 +48,30 @@ public class ProductService {
     }
 
     public Optional<List<ProductDto>> getAllProducts() {
-        return Optional.of(this.productRepository.findAll().stream().map(this::mapToProductDTO).toList());
+        return Optional.of(this.productRepository
+                .findAll()
+                .stream()
+                .map(this::mapToProductDTO)
+                .toList()
+        );
     }
 
-    public SuccessResponse updateProduct(Long id, ProductDto productDTO) {
+    public SuccessResponse updateProduct(Long id, ProductDto productDto) {
 
         Product product = this.productRepository
                 .findById(id)
                 .orElseThrow(() ->
                         new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, id)));
 
-        if (productRepository.findByName(productDTO.name()).filter(p -> !p.getId().equals(id)).isPresent()) {
+        if (productRepository.findByName(productDto.name()).filter(p -> !p.getId().equals(id)).isPresent()) {
             throw new MismatchedObjectIdException(String.format(ApplicationMessages.MISMATCHED_OBJECT_EXCEPTION, id));
         }
-//
-        product.setName(productDTO.name());
-        product.setCategory(ProductCategory.valueOf(productDTO.category().toUpperCase()));
-        product.setUnit(UnitType.valueOf(productDTO.unit().toUpperCase()));
+
+        validateProductData(productDto);
+
+        product.setName(productDto.name());
+        product.setCategory(ProductCategory.valueOf(productDto.category().toUpperCase()));
+        product.setUnit(UnitType.valueOf(productDto.unit().toUpperCase()));
 
         Product savedProduct = this.productRepository.save(product);
 
