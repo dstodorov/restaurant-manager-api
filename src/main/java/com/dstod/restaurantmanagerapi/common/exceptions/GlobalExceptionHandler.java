@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.logging.log4j.ThreadContext.isEmpty;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -42,7 +44,14 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
         List<String> errors = new ArrayList<>();
-        errors.add(exception.getMessage());
+
+        List<Long> missingProducts = ((ProductNotFoundException) exception).getMissingProducts();
+
+        if (!missingProducts.isEmpty()) {
+            missingProducts.forEach(p -> errors.add(String.format("Missing product with id %d", p)));
+        } else {
+            errors.add(exception.getMessage());
+        }
 
         ErrorDetails errorDetails = getErrorDetails(exception);
 

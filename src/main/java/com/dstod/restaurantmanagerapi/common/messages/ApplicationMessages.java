@@ -11,6 +11,7 @@ public interface ApplicationMessages {
     String RECIPE_NOT_FOUND = "Recipe with id %d, not found";
     String DUPLICATED_RECIPE = "Recipe with name %s already exist in the repository";
     String PRODUCT_NOT_FOUND = "Product with id %d was not found";
+    String PRODUCTS_NOT_FOUND = "Missing products";
     String DUPLICATED_PRODUCT = "Product with name %s already exist in the inventory";
     String USERNAME_EXISTS = "Username %s already exist";
     String EMAIL_EXISTS = "Email %s is already exist";

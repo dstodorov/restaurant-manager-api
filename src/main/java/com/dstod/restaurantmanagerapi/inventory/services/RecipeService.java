@@ -104,7 +104,7 @@ public class RecipeService {
         }
     }
 
-    private RecipeDto mapToRecipeDTO(Recipe recipe) {
+    public RecipeDto mapToRecipeDTO(Recipe recipe) {
         return new RecipeDto(
                 recipe.getId(),
                 recipe.getName(),

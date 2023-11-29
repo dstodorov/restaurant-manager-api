@@ -1,6 +1,7 @@
 package com.dstod.restaurantmanagerapi.inventory.controllers;
 
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeProductsDTO;
+import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
+import com.dstod.restaurantmanagerapi.inventory.models.dtos.RecipeProductsDto;
 import com.dstod.restaurantmanagerapi.inventory.services.RecipeProductsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,14 +24,7 @@ public class RecipeProductsController {
 
     @Operation(summary = "Add new product to specific recipe by given ID")
     @PostMapping("/{recipeId}")
-    public ResponseEntity<RecipeProductsDTO> addRecipeProducts(@PathVariable Long recipeId, @Valid @RequestBody RecipeProductsDTO recipeProductsDTO, UriComponentsBuilder uriComponentsBuilder) {
-
-        Long recipeIdResponse = this.recipeProductsService.addRecipeProducts(recipeId, recipeProductsDTO);
-
-        if (recipeId == -1L) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/v1/recipes/{id}").build(recipeIdResponse)).build();
+    public ResponseEntity<SuccessResponse> addRecipeProducts(@PathVariable Long recipeId, @Valid @RequestBody RecipeProductsDto recipeProductsDTO) {
+        return ResponseEntity.ok(this.recipeProductsService.addRecipeProducts(recipeId, recipeProductsDTO));
     }
 }
