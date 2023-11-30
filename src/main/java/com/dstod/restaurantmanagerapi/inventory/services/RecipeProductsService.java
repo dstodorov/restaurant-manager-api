@@ -35,18 +35,31 @@ public class RecipeProductsService {
 
         Map<Long, RecipeProductDto> productsMap = new HashMap<>();
 
-        productsDTO.products().forEach(p -> {
-            if (productsMap.containsKey(p.productId())) {
-//                productsMap.put(p.productId(), new RecipeProductDto(
-//                        p.productId(),
-//                        productsMap.get(p.productId()).quantity() + p.quantity()
-//                ));
-                throw new RecipeProductDuplicationException(String.format(ApplicationMessages.RECIPE_PRODUCT_DUPLICATION, p.productId()));
-            } else {
-                productsMap.put(p.productId(), new RecipeProductDto(p.productId(), p.quantity()));
-            }
-        });
+        checkForDuplicatedProductIds(productsDTO, productsMap);
 
+        checkForMissingProducts(productsMap);
+
+        Optional<Recipe> recipe = this.recipeRepository.findById(recipeId);
+
+        ensureRecipeExists(recipeId, recipe);
+
+        List<RecipeProduct> productsList = getRecipeProductEntities(productsMap, recipe);
+
+        updateExistingRecipeProductEntities(productsList, recipe);
+
+        List<RecipeProduct> savedRecipeProducts = this.recipeProductRepository.saveAll(productsList);
+
+        RecipeDetailsResponse recipeDetailsResponse = createRecipeDetailsResponse(recipe.get(), savedRecipeProducts);
+        return new SuccessResponse(ApplicationMessages.RECIPE_PRODUCT_SUCCESSFULLY_UPDATED, new Date(), recipeDetailsResponse);
+    }
+
+    private static void ensureRecipeExists(Long recipeId, Optional<Recipe> recipe) {
+        if (recipe.isEmpty()) {
+            throw new RecipeNotFoundException(String.format(ApplicationMessages.RECIPE_NOT_FOUND, recipeId));
+        }
+    }
+
+    private void checkForMissingProducts(Map<Long, RecipeProductDto> productsMap) {
         List<Long> missingProducts = new ArrayList<>();
 
         productsMap.forEach((key, value) -> {
@@ -59,22 +72,30 @@ public class RecipeProductsService {
         if (!missingProducts.isEmpty()) {
             throw new ProductNotFoundException(ApplicationMessages.PRODUCTS_NOT_FOUND, missingProducts);
         }
+    }
 
-        Optional<Recipe> recipe = this.recipeRepository.findById(recipeId);
+    private static void checkForDuplicatedProductIds(RecipeProductsDto productsDTO, Map<Long, RecipeProductDto> productsMap) {
+        productsDTO.products().forEach(p -> {
+            if (productsMap.containsKey(p.productId())) {
+                throw new RecipeProductDuplicationException(String.format(ApplicationMessages.RECIPE_PRODUCT_DUPLICATION, p.productId()));
+            } else {
+                productsMap.put(p.productId(), new RecipeProductDto(p.productId(), p.quantity()));
+            }
+        });
+    }
 
-        if (recipe.isEmpty()) {
-            throw new RecipeNotFoundException(String.format(ApplicationMessages.RECIPE_NOT_FOUND, recipeId));
-        }
+    private void updateExistingRecipeProductEntities(List<RecipeProduct> productsList, Optional<Recipe> recipe) {
+        productsList.forEach(p -> {
+            Optional<RecipeProduct> byRecipeAndProduct = this.recipeProductRepository.findByRecipeAndProduct(recipe.get(), p.getProduct());
+            byRecipeAndProduct.ifPresent(recipeProduct -> this.recipeProductRepository.deleteById(recipeProduct.getId()));
+        });
+    }
 
-        List<RecipeProduct> productsList = productsMap.values()
+    private List<RecipeProduct> getRecipeProductEntities(Map<Long, RecipeProductDto> productsMap, Optional<Recipe> recipe) {
+        return productsMap.values()
                 .stream()
                 .map(recipeProductDto -> mapToRecipeProduct(recipe.get(), recipeProductDto))
                 .toList();
-
-        List<RecipeProduct> savedRecipeProducts = this.recipeProductRepository.saveAll(productsList);
-
-        RecipeDetailsResponse recipeDetailsResponse = createRecipeDetailsResponse(recipe.get(), savedRecipeProducts);
-        return new SuccessResponse(ApplicationMessages.RECIPE_PRODUCT_SUCCESSFULLY_UPDATED, new Date(), recipeDetailsResponse);
     }
 
     private RecipeDetailsResponse createRecipeDetailsResponse(Recipe recipe, List<RecipeProduct> recipeProducts) {
