@@ -31,17 +31,13 @@ public class RecipeProductsService {
         this.recipeService = recipeService;
     }
 
-    public SuccessResponse addRecipeProducts(Long recipeId, RecipeProductsDto productsDTO) {
+    public SuccessResponse addRecipeProducts(Long recipeId, RecipeProductsDto recipeProductsDto) {
+        Recipe recipe = ensureRecipeExists(recipeId);
+        ;
 
-        Map<Long, RecipeProductDto> productsMap = new HashMap<>();
-
-        checkForDuplicatedProductIds(productsDTO, productsMap);
+        Map<Long, RecipeProductDto> productsMap = checkForDuplicatedProductIds(recipeProductsDto);
 
         checkForMissingProducts(productsMap);
-
-        Optional<Recipe> recipe = this.recipeRepository.findById(recipeId);
-
-        ensureRecipeExists(recipeId, recipe);
 
         List<RecipeProduct> productsList = getRecipeProductEntities(productsMap, recipe);
 
@@ -49,14 +45,14 @@ public class RecipeProductsService {
 
         List<RecipeProduct> savedRecipeProducts = this.recipeProductRepository.saveAll(productsList);
 
-        RecipeDetailsResponse recipeDetailsResponse = createRecipeDetailsResponse(recipe.get(), savedRecipeProducts);
+        RecipeDetailsResponse recipeDetailsResponse = createRecipeDetailsResponse(recipe, savedRecipeProducts);
+
         return new SuccessResponse(ApplicationMessages.RECIPE_PRODUCT_SUCCESSFULLY_UPDATED, new Date(), recipeDetailsResponse);
     }
 
-    private static void ensureRecipeExists(Long recipeId, Optional<Recipe> recipe) {
-        if (recipe.isEmpty()) {
-            throw new RecipeNotFoundException(String.format(ApplicationMessages.RECIPE_NOT_FOUND, recipeId));
-        }
+    private Recipe ensureRecipeExists(Long recipeId) {
+        return recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new RecipeNotFoundException(String.format(ApplicationMessages.RECIPE_NOT_FOUND, recipeId)));
     }
 
     private void checkForMissingProducts(Map<Long, RecipeProductDto> productsMap) {
@@ -74,7 +70,9 @@ public class RecipeProductsService {
         }
     }
 
-    private static void checkForDuplicatedProductIds(RecipeProductsDto productsDTO, Map<Long, RecipeProductDto> productsMap) {
+    private Map<Long, RecipeProductDto> checkForDuplicatedProductIds(RecipeProductsDto productsDTO) {
+        Map<Long, RecipeProductDto> productsMap = new HashMap<>();
+
         productsDTO.products().forEach(p -> {
             if (productsMap.containsKey(p.productId())) {
                 throw new RecipeProductDuplicationException(String.format(ApplicationMessages.RECIPE_PRODUCT_DUPLICATION, p.productId()));
@@ -82,19 +80,18 @@ public class RecipeProductsService {
                 productsMap.put(p.productId(), new RecipeProductDto(p.productId(), p.quantity()));
             }
         });
+
+        return productsMap;
     }
 
-    private void updateExistingRecipeProductEntities(List<RecipeProduct> productsList, Optional<Recipe> recipe) {
-        productsList.forEach(p -> {
-            Optional<RecipeProduct> byRecipeAndProduct = this.recipeProductRepository.findByRecipeAndProduct(recipe.get(), p.getProduct());
-            byRecipeAndProduct.ifPresent(recipeProduct -> this.recipeProductRepository.deleteById(recipeProduct.getId()));
-        });
+    private void updateExistingRecipeProductEntities(List<RecipeProduct> productsList, Recipe recipe) {
+        productsList.forEach(p -> recipeProductRepository.deleteRecipeProductByRecipeAndProduct(recipe, p.getProduct()));
     }
 
-    private List<RecipeProduct> getRecipeProductEntities(Map<Long, RecipeProductDto> productsMap, Optional<Recipe> recipe) {
+    private List<RecipeProduct> getRecipeProductEntities(Map<Long, RecipeProductDto> productsMap, Recipe recipe) {
         return productsMap.values()
                 .stream()
-                .map(recipeProductDto -> mapToRecipeProduct(recipe.get(), recipeProductDto))
+                .map(recipeProductDto -> mapToRecipeProduct(recipe, recipeProductDto))
                 .toList();
     }
 
@@ -114,11 +111,13 @@ public class RecipeProductsService {
     }
 
     private RecipeProduct mapToRecipeProduct(Recipe recipe, RecipeProductDto recipeProduct) {
-        Optional<Product> productById = this.productRepository.findById(recipeProduct.productId());
+        Product productById = this.productRepository
+                .findById(recipeProduct.productId())
+                .orElseThrow(() -> new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, recipeProduct.productId())));
 
         return new RecipeProduct(
                 0L,
-                productById.get(),
+                productById,
                 recipe,
                 recipeProduct.quantity()
         );
