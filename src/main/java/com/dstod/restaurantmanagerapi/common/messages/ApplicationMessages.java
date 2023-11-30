@@ -28,6 +28,8 @@ public interface ApplicationMessages {
     String RECIPE_SUCCESSFULLY_CREATED = "Successfully created recipe";
     String RECIPE_WRONG_CATEGORY = "Recipe category %s is not valid";
     String RECIPE_SUCCESSFULLY_UPDATED = "Successfully updated recipe";
+    String RECIPE_PRODUCT_DUPLICATION = "Product with id %d is duplicated in the input request";
+    String RECIPE_PRODUCT_SUCCESSFULLY_UPDATED = "Successfully added products to the recipe";
     String GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND = "Product not found";
     String GLOBAL_EXCEPTION_DUPLICATED_PRODUCT = "Duplicated product";
     String GLOBAL_EXCEPTION_RECIPE_NOT_FOUND = "Recipe not found";
@@ -37,4 +39,5 @@ public interface ApplicationMessages {
     String GLOBAL_EXCEPTION_DUPLICATED_SUPPLIER = "Duplicated supplier";
     String GLOBAL_EXCEPTION_UNEXPECTED_ERROR = "Unexpected error";
     String GLOBAL_EXCEPTION_MISMATCH_ID = "Mismatched object ID";
+    String GLOBAL_EXCEPTION_DUPLICATED_RECIPE_PRODUCT = "Duplicated products in the input request";
 }

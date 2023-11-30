@@ -45,13 +45,12 @@ public class GlobalExceptionHandler {
     private ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
         List<String> errors = new ArrayList<>();
 
-        List<Long> missingProducts = ((ProductNotFoundException) exception).getMissingProducts();
-
-        if (!missingProducts.isEmpty()) {
-            missingProducts.forEach(p -> errors.add(String.format("Missing product with id %d", p)));
-        } else {
-            errors.add(exception.getMessage());
+        if (exception instanceof ProductNotFoundException) {
+            List<Long> missingProducts = ((ProductNotFoundException) exception).getMissingProducts();
+            missingProducts.forEach(p -> errors.add(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, p)));
         }
+
+        errors.add(exception.getMessage());
 
         ErrorDetails errorDetails = getErrorDetails(exception);
 
@@ -69,12 +68,14 @@ public class GlobalExceptionHandler {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_SUPPLIER_NOT_FOUND, HttpStatus.NOT_FOUND);
         } else if (exception instanceof DuplicatedSupplierDetailsException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_DUPLICATED_SUPPLIER, HttpStatus.CONFLICT);
-        }else if (exception instanceof MismatchedObjectIdException) {
+        } else if (exception instanceof MismatchedObjectIdException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISMATCH_ID, HttpStatus.CONFLICT);
-        }else if (exception instanceof RecipeCategoryNotFoundException) {
+        } else if (exception instanceof RecipeCategoryNotFoundException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_RECIPE_DETAILS_ERROR, HttpStatus.CONFLICT);
-        }else if (exception instanceof RecipeNotFoundException) {
+        } else if (exception instanceof RecipeNotFoundException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_RECIPE_NOT_FOUND, HttpStatus.CONFLICT);
+        } else if (exception instanceof RecipeProductDuplicationException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_DUPLICATED_RECIPE_PRODUCT, HttpStatus.CONFLICT);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }

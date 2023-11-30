@@ -1,5 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
+import com.dstod.restaurantmanagerapi.common.exceptions.inventory.RecipeProductDuplicationException;
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.ProductNotFoundException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.RecipeNotFoundException;
@@ -36,10 +37,11 @@ public class RecipeProductsService {
 
         productsDTO.products().forEach(p -> {
             if (productsMap.containsKey(p.productId())) {
-                productsMap.put(p.productId(), new RecipeProductDto(
-                        p.productId(),
-                        productsMap.get(p.productId()).quantity() + p.quantity()
-                ));
+//                productsMap.put(p.productId(), new RecipeProductDto(
+//                        p.productId(),
+//                        productsMap.get(p.productId()).quantity() + p.quantity()
+//                ));
+                throw new RecipeProductDuplicationException(String.format(ApplicationMessages.RECIPE_PRODUCT_DUPLICATION, p.productId()));
             } else {
                 productsMap.put(p.productId(), new RecipeProductDto(p.productId(), p.quantity()));
             }
@@ -72,7 +74,7 @@ public class RecipeProductsService {
         List<RecipeProduct> savedRecipeProducts = this.recipeProductRepository.saveAll(productsList);
 
         RecipeDetailsResponse recipeDetailsResponse = createRecipeDetailsResponse(recipe.get(), savedRecipeProducts);
-        return new SuccessResponse("Successfully added products to the recipe", new Date(), recipeDetailsResponse);
+        return new SuccessResponse(ApplicationMessages.RECIPE_PRODUCT_SUCCESSFULLY_UPDATED, new Date(), recipeDetailsResponse);
     }
 
     private RecipeDetailsResponse createRecipeDetailsResponse(Recipe recipe, List<RecipeProduct> recipeProducts) {
