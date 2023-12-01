@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record AddInventoryProductDTO(
+public record AddInventoryProductDto(
         @Positive
         @NotNull
         Long productId,

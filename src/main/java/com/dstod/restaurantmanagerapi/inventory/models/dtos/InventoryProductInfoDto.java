@@ -3,7 +3,7 @@ package com.dstod.restaurantmanagerapi.inventory.models.dtos;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record InventoryProductInfoDTO(
+public record InventoryProductInfoDto(
         Long id,
         Double currentQuantity,
         SupplierInfoDTO supplier,
@@ -12,7 +12,7 @@ public record InventoryProductInfoDTO(
         LocalDate expiryDate,
         Boolean wasted
 ) {
-    public InventoryProductInfoDTO {
+    public InventoryProductInfoDto {
 
     }
 }

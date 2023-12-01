@@ -33,7 +33,6 @@ public class RecipeProductsService {
 
     public SuccessResponse addRecipeProducts(Long recipeId, RecipeProductsDto recipeProductsDto) {
         Recipe recipe = ensureRecipeExists(recipeId);
-        ;
 
         Map<Long, RecipeProductDto> productsMap = checkForDuplicatedProductIds(recipeProductsDto);
 

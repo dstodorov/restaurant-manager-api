@@ -6,7 +6,8 @@ public interface ApplicationMessages {
     String PRODUCT_WRONG_UNITS = "Product unit %s is not valid";
     String PRODUCT_SUCCESSFULLY_CREATED = "Successfully created product";
     String PRODUCT_SUCCESSFULLY_UPDATED = "Successfully updated product";
-    String INVENTORY_PRODUCT_MISSING = "Product with %d (%s) is missing in the inventory";
+    String INVENTORY_PRODUCT_MISSING = "Product with %d is missing in the inventory";
+    String INVENTORY_PRODUCT_CREATED = "Inventory product was successfully created";
     String PRODUCT_OUT_OF_STOCK = "Product with id %d (%s) is out of stock";
     String RECIPE_NOT_FOUND = "Recipe with id %d, not found";
     String DUPLICATED_RECIPE = "Recipe with name %s already exist in the repository";
@@ -40,4 +41,5 @@ public interface ApplicationMessages {
     String GLOBAL_EXCEPTION_UNEXPECTED_ERROR = "Unexpected error";
     String GLOBAL_EXCEPTION_MISMATCH_ID = "Mismatched object ID";
     String GLOBAL_EXCEPTION_DUPLICATED_RECIPE_PRODUCT = "Duplicated products in the input request";
+    String GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT = "Missing product in the inventory";
 }

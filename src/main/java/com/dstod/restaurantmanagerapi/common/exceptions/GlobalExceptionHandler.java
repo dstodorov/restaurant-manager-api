@@ -50,7 +50,14 @@ public class GlobalExceptionHandler {
             missingProducts.forEach(p -> errors.add(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, p)));
         }
 
-        errors.add(exception.getMessage());
+        if (exception instanceof InventoryStockIssuesException) {
+            List<String> issues = ((InventoryStockIssuesException) exception).getIssues();
+            errors.addAll(issues);
+        }
+
+        if (errors.isEmpty()) {
+            errors.add(exception.getMessage());
+        }
 
         ErrorDetails errorDetails = getErrorDetails(exception);
 
@@ -76,6 +83,10 @@ public class GlobalExceptionHandler {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_RECIPE_NOT_FOUND, HttpStatus.CONFLICT);
         } else if (exception instanceof RecipeProductDuplicationException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_DUPLICATED_RECIPE_PRODUCT, HttpStatus.CONFLICT);
+        } else if (exception instanceof InventoryStockIssuesException) {
+            return new ErrorDetails(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        } else if (exception instanceof InventoryProductNotFoundException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT, HttpStatus.NOT_FOUND);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
