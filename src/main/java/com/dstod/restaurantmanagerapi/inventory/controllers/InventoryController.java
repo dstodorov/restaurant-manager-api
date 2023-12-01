@@ -1,7 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.controllers;
 
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
-import com.dstod.restaurantmanagerapi.inventory.models.dtos.CheckoutStatus;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.AddInventoryProductDto;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.CheckoutProductsRequestDTO;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.InventoryProductInfoDto;
@@ -12,7 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -55,6 +53,6 @@ public class InventoryController {
     @Operation(summary = "Checkout products from the inventory")
     @GetMapping("/checkout")
     public ResponseEntity<SuccessResponse> checkoutRecipeProducts(@Valid @RequestBody CheckoutProductsRequestDTO request) {
-        return ResponseEntity.badRequest().body(this.inventoryService.checkoutRecipeProducts(request.recipeId(), request.quantity()));
+        return ResponseEntity.ok().body(this.inventoryService.checkoutRecipeProducts(request.recipeId(), request.quantity()));
     }
 }
