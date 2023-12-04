@@ -1,6 +1,7 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
+import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.users.models.dtos.*;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserDetailsDuplicationException;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserNotFoundException;
@@ -13,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -30,7 +28,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public StatusResponse createUser(CreateUserRequest createUserRequest) {
+    public SuccessResponse createUser(CreateUserRequest createUserRequest) {
         ensureUserDetailsDoNotExist(
                 0,
                 createUserRequest.username(),
@@ -39,9 +37,10 @@ public class UserService {
         );
 
         User user = mapUserRequestToUserEntity(createUserRequest);
-        this.userRepository.save(user);
+        User savedUser = this.userRepository.save(user);
+        UserDetailsResponse savedUserDetailsResponse = mapUserEntityToUserInfoResponse(savedUser);
 
-        return new StatusResponse(HttpStatus.OK, ApplicationMessages.USER_CREATED);
+        return new SuccessResponse(ApplicationMessages.USER_CREATED, new Date(), savedUserDetailsResponse);
     }
 
 
@@ -53,7 +52,7 @@ public class UserService {
         return mapUserEntityToUserInfoResponse(user);
     }
 
-    public UserDetailsResponse updateUserDetails(long userId, UpdateUserDetailsRequest userDetailsRequest) {
+    public UserDetailsResponse updateUserDetails(long userId, UpdateUserRequest userDetailsRequest) {
         Optional<User> userById = this.userRepository.findById(userId);
 
         if (userById.isEmpty()) {
@@ -96,7 +95,7 @@ public class UserService {
         }
     }
 
-    private void updateUserEntity(User user, UpdateUserDetailsRequest userDetailsRequest) {
+    private void updateUserEntity(User user, UpdateUserRequest userDetailsRequest) {
 
         user.getRoles().clear();
         this.userRepository.save(user);
@@ -104,12 +103,12 @@ public class UserService {
         Set<Role> roles = getRoleEntities(userDetailsRequest.roles());
 
         user.setFirstName(userDetailsRequest.firstName());
-        user.setMiddleName(userDetailsRequest.middleName());
+        user.setMiddleName(userDetailsRequest.middleName() != null ? userDetailsRequest.middleName() : "N/A");
         user.setLastName(userDetailsRequest.lastName());
         user.setUsername(userDetailsRequest.username());
         user.setPassword(userDetailsRequest.password());
         user.setRoles(roles);
-        user.setEmail(userDetailsRequest.email());
+        user.setEmail(userDetailsRequest.email() != null ? userDetailsRequest.email() : "N/A");
         user.setPhoneNumber(userDetailsRequest.phoneNumber());
 
         this.userRepository.save(user);
@@ -149,6 +148,7 @@ public class UserService {
         List<String> roles = user.getRoles().stream().map(role -> role.getRole().name()).toList();
 
         return new UserDetailsResponse(
+                user.getId(),
                 user.getFirstName(),
                 user.getMiddleName(),
                 user.getLastName(),
