@@ -135,12 +135,12 @@ public class UserService {
         Set<Role> roles = getRoleEntities(createUserRequest.roles());
         return new User(
                 createUserRequest.firstName(),
-                createUserRequest.middleName(),
+                createUserRequest.middleName() != null ? createUserRequest.middleName() : "N/A",
                 createUserRequest.lastName(),
                 createUserRequest.username(),
                 passwordEncoder.encode(createUserRequest.password()),
                 roles,
-                createUserRequest.email(),
+                createUserRequest.email() != null ? createUserRequest.email() : "N/A",
                 createUserRequest.phoneNumber()
         );
     }

@@ -6,8 +6,10 @@ import com.dstod.restaurantmanagerapi.common.models.ErrorDetails;
 import com.dstod.restaurantmanagerapi.common.models.FailureResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,25 +24,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<FailureResponse> handleRuntimeException(RuntimeException exception) {
         return handleException(exception);
     }
-//
-//    @ExceptionHandler(UserDetailsDuplicationException.class)
-//    public ResponseEntity<ErrorResponse> handleUserDetailsDuplicationException(UserDetailsDuplicationException exception) {
-//        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.CONFLICT);
-//    }
-//
-//    @ExceptionHandler(UserNotFoundException.class)
-//    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException exception) {
-//        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.NOT_FOUND);
-//    }
-//
-//    @ExceptionHandler(UserRoleDoesNotExistException.class)
-//    public ResponseEntity<ErrorResponse> handleUserRoleDoesNotExistException(UserRoleDoesNotExistException exception) {
-//        return sendResponseMessage("Users", exception.getMessage(), HttpStatus.NOT_FOUND);
-//    }
-//
-//    private ResponseEntity<ErrorResponse> sendResponseMessage(String module, String message, HttpStatus status) {
-//        return new ResponseEntity<>(new ErrorResponse(module, message), status);
-//    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<FailureResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        List<String> errors = new ArrayList<>();
+        errors.add(ex.getBindingResult().getFieldError().getDefaultMessage());
+        return new ResponseEntity<>(new FailureResponse(ApplicationMessages.GLOBAL_EXCEPTION_VALIDATION_ERROR, new Date(), errors), HttpStatus.BAD_REQUEST);
+    }
 
     private ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
         List<String> errors = new ArrayList<>();
