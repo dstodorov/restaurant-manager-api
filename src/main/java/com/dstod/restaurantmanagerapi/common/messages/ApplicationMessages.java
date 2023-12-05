@@ -43,4 +43,6 @@ public interface ApplicationMessages {
     String GLOBAL_EXCEPTION_DUPLICATED_RECIPE_PRODUCT = "Duplicated products in the input request";
     String GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT = "Missing product in the inventory";
     String GLOBAL_EXCEPTION_VALIDATION_ERROR = "Validation error";
+    String REFRESH_TOKEN_FAILURE = "Token refresh failed";
+    String GLOBAL_EXCEPTION_AUTHORIZATION = "Not authorized";
 }

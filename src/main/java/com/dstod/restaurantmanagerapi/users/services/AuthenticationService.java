@@ -1,6 +1,8 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
 import com.dstod.restaurantmanagerapi.auth.models.dto.AuthenticationResponse;
+import com.dstod.restaurantmanagerapi.common.exceptions.auth.RefreshTokenFailureException;
+import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.users.models.dtos.LoginRequest;
 import com.dstod.restaurantmanagerapi.auth.models.entity.Token;
 import com.dstod.restaurantmanagerapi.users.models.entities.User;
@@ -77,8 +79,8 @@ public class AuthenticationService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String username;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RefreshTokenFailureException(ApplicationMessages.REFRESH_TOKEN_FAILURE);
         }
         refreshToken = authHeader.substring(7);
         username = jwtService.extractUsername(refreshToken);

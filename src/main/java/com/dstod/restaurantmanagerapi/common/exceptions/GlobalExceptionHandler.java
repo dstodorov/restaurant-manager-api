@@ -1,5 +1,6 @@
 package com.dstod.restaurantmanagerapi.common.exceptions;
 
+import com.dstod.restaurantmanagerapi.common.exceptions.auth.RefreshTokenFailureException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.models.ErrorDetails;
@@ -31,6 +32,14 @@ public class GlobalExceptionHandler {
         List<String> errors = new ArrayList<>();
         errors.add(ex.getBindingResult().getFieldError().getDefaultMessage());
         return new ResponseEntity<>(new FailureResponse(ApplicationMessages.GLOBAL_EXCEPTION_VALIDATION_ERROR, new Date(), errors), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RefreshTokenFailureException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<FailureResponse> handleRefreshTokenFailureException(RefreshTokenFailureException e) {
+        ArrayList<String> errors = new ArrayList<>();
+        errors.add(e.getMessage());
+        return new ResponseEntity<>(new FailureResponse(ApplicationMessages.GLOBAL_EXCEPTION_AUTHORIZATION, new Date(), errors), HttpStatus.UNAUTHORIZED);
     }
 
     private ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
