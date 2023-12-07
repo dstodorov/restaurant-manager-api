@@ -1,7 +1,6 @@
 package com.dstod.restaurantmanagerapi.inventory.services;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
-import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.inventory.models.dtos.*;
 import com.dstod.restaurantmanagerapi.inventory.models.entities.*;
@@ -10,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.*;
 
 @Service
 public class InventoryService {
@@ -36,55 +37,46 @@ public class InventoryService {
 
         Inventory savedInventoryProduct = this.inventoryRepository.save(inventoryProduct);
 
-        InventoryProductInfoDto savedInventoryProductInfoDto = map(savedInventoryProduct);
+        InventoryProductInfoDto savedInventoryProductInfoDto = mapToInventoryProductInfoDto(savedInventoryProduct);
 
-        return new SuccessResponse(ApplicationMessages.INVENTORY_PRODUCT_CREATED, new Date(), savedInventoryProductInfoDto);
+        return new SuccessResponse(INVENTORY_PRODUCT_CREATED, new Date(), savedInventoryProductInfoDto);
     }
 
     public InventoryProductInfoDto getInventoryProductInfo(Long id) {
         return this.inventoryRepository
                 .findById(id)
-                .map(this::map)
-                .orElseThrow(() -> new InventoryProductNotFoundException(String.format(ApplicationMessages.INVENTORY_PRODUCT_MISSING, id)));
+                .map(this::mapToInventoryProductInfoDto)
+                .orElseThrow(() -> new InventoryProductNotFoundException(String.format(INVENTORY_PRODUCT_MISSING, id)));
     }
 
     public Optional<List<InventoryProductInfoDto>> getInventoryProducts() {
         return Optional.of(this.inventoryRepository
                 .findAll()
                 .stream()
-                .map(this::map)
+                .map(this::mapToInventoryProductInfoDto)
                 .toList());
     }
 
     public SuccessResponse checkoutRecipeProducts(long recipeId, Integer numberOfDishes) {
         Recipe recipe = getRecipeById(recipeId);
-
-        ArrayList<String> inventoryIssues = new ArrayList<>();
-
-        for (RecipeProduct recipeProduct : recipeProductRepository.findRecipeProductByRecipe(recipe)) {
-
-            String productAvailabilityIssue = checkProductAvailability(recipeProduct, numberOfDishes);
-
-            if (!productAvailabilityIssue.isEmpty()) {
-                inventoryIssues.add(productAvailabilityIssue);
-            }
-        }
+        List<RecipeProduct> recipeProducts = recipeProductRepository.findRecipeProductByRecipe(recipe);
+        List<String> inventoryIssues = checkEachProductAvailability(recipeProducts, numberOfDishes);
 
         if (!inventoryIssues.isEmpty()) {
-            throw new InventoryStockIssuesException("There are inventory stock issues", inventoryIssues);
+            throw new InventoryStockIssuesException(INVENTORY_ISSUES, inventoryIssues);
         }
 
-        for (RecipeProduct recipeProduct : recipeProductRepository.findRecipeProductByRecipe(recipe)) {
-            reduceProductQuantity(recipeProduct, numberOfDishes);
-        }
+        reduceProductQuantities(recipeProducts, numberOfDishes);
+        InventoryCheckoutResponse inventoryCheckoutResponse = getInventoryCheckoutResponse(numberOfDishes, recipeProducts);
 
-        InventoryCheckoutResponse inventoryCheckoutResponse = getInventoryCheckoutResponse(recipe, numberOfDishes);
-
-        return new SuccessResponse("Successful products checkout", new Date(), inventoryCheckoutResponse);
+        return new SuccessResponse(SUCCESSFUL_CHECKOUT, new Date(), inventoryCheckoutResponse);
     }
 
-    private InventoryCheckoutResponse getInventoryCheckoutResponse(Recipe recipe, int numberOfDishes) {
-        List<RecipeProduct> recipeProducts = this.recipeProductRepository.findRecipeProductByRecipe(recipe);
+    private void reduceProductQuantities(List<RecipeProduct> recipeProducts, int numberOfDishes) {
+        recipeProducts.forEach(recipeProduct -> reduceProductQuantity(recipeProduct, numberOfDishes));
+    }
+
+    private InventoryCheckoutResponse getInventoryCheckoutResponse(int numberOfDishes, List<RecipeProduct> recipeProducts) {
         List<CheckoutProduct> checkoutProducts = new ArrayList<>();
         recipeProducts.forEach(p -> {
             checkoutProducts.add(new CheckoutProduct(p.getProduct().getName(), numberOfDishes * p.getQuantity()));
@@ -97,7 +89,7 @@ public class InventoryService {
         Optional<Recipe> recipeById = this.recipeRepository.findById(recipeId);
 
         if (recipeById.isEmpty()) {
-            throw new RecipeNotFoundException(String.format(ApplicationMessages.RECIPE_NOT_FOUND, recipeId));
+            throw new RecipeNotFoundException(String.format(RECIPE_NOT_FOUND, recipeId));
         }
 
         return recipeById.get();
@@ -120,7 +112,7 @@ public class InventoryService {
     private Product ensureProductExist(AddInventoryProductDto inventoryProductDto) {
         return productRepository
                 .findById(inventoryProductDto.productId())
-                .orElseThrow(() -> new ProductNotFoundException(String.format(ApplicationMessages.PRODUCT_NOT_FOUND, inventoryProductDto.productId())));
+                .orElseThrow(() -> new ProductNotFoundException(String.format(PRODUCT_NOT_FOUND, inventoryProductDto.productId())));
     }
 
     private Supplier ensureSupplierExist(AddInventoryProductDto inventoryProductDTO) {
@@ -129,7 +121,7 @@ public class InventoryService {
                 .orElseThrow(() -> new SupplierNotFoundException(inventoryProductDTO.supplierId().toString()));
     }
 
-    private InventoryProductInfoDto map(Inventory inventoryProduct) {
+    private InventoryProductInfoDto mapToInventoryProductInfoDto(Inventory inventoryProduct) {
         SupplierInfoDTO supplierInfoDTO = new SupplierInfoDTO(
                 inventoryProduct.getSupplier().getId(),
                 inventoryProduct.getSupplier().getName(),
@@ -165,26 +157,37 @@ public class InventoryService {
         }
     }
 
-    private String checkProductAvailability(RecipeProduct recipeProduct, int numberOfDishes) {
+    private String getProductAvailabilityStatus(RecipeProduct recipeProduct, int numberOfDishes) {
         Optional<Inventory> inventoryOptional = this.inventoryRepository.findByProduct(recipeProduct.getProduct());
         Product product = recipeProduct.getProduct();
 
         if (inventoryOptional.isEmpty()) {
-            return String.format(ApplicationMessages.INVENTORY_PRODUCT_MISSING, product.getId());
+            return String.format(INVENTORY_PRODUCT_MISSING, product.getId());
         }
 
         Inventory inventory = inventoryOptional.get();
 
         if (inventory.getWasted()) {
-            return String.format(ApplicationMessages.PRODUCT_WASTED, product.getId(), product.getName());
+            return String.format(PRODUCT_WASTED, product.getId(), product.getName());
         }
 
         double requiredQuantity = recipeProduct.getQuantity() * numberOfDishes;
 
         if (inventory.getCurrentQuantity() < requiredQuantity) {
-            return String.format(ApplicationMessages.PRODUCT_OUT_OF_STOCK, product.getId(), product.getName());
+            return String.format(PRODUCT_OUT_OF_STOCK, product.getId(), product.getName());
         }
 
         return "";
+    }
+
+    private List<String> checkEachProductAvailability(List<RecipeProduct> recipeProducts, int numberOfDishes) {
+        List<String> inventoryIssues = new ArrayList<>();
+        for (RecipeProduct recipeProduct : recipeProducts) {
+            String productAvailabilityIssue = getProductAvailabilityStatus(recipeProduct, numberOfDishes);
+            if (!productAvailabilityIssue.isEmpty()) {
+                inventoryIssues.add(productAvailabilityIssue);
+            }
+        }
+        return inventoryIssues;
     }
 }

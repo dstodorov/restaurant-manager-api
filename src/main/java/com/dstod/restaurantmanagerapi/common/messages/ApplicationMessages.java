@@ -31,6 +31,9 @@ public interface ApplicationMessages {
     String RECIPE_SUCCESSFULLY_UPDATED = "Successfully updated recipe";
     String RECIPE_PRODUCT_DUPLICATION = "Product with id %d is duplicated in the input request";
     String RECIPE_PRODUCT_SUCCESSFULLY_UPDATED = "Successfully added products to the recipe";
+    String REFRESH_TOKEN_FAILURE = "Token refresh failed";
+    String INVENTORY_ISSUES = "There are inventory stock issues";
+    String SUCCESSFUL_CHECKOUT = "Successful products checkout";
     String GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND = "Product not found";
     String GLOBAL_EXCEPTION_DUPLICATED_PRODUCT = "Duplicated product";
     String GLOBAL_EXCEPTION_RECIPE_NOT_FOUND = "Recipe not found";
@@ -43,6 +46,5 @@ public interface ApplicationMessages {
     String GLOBAL_EXCEPTION_DUPLICATED_RECIPE_PRODUCT = "Duplicated products in the input request";
     String GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT = "Missing product in the inventory";
     String GLOBAL_EXCEPTION_VALIDATION_ERROR = "Validation error";
-    String REFRESH_TOKEN_FAILURE = "Token refresh failed";
     String GLOBAL_EXCEPTION_AUTHORIZATION = "Not authorized";
 }

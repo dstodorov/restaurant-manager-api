@@ -14,6 +14,22 @@
  - Inventory Management
  - ...
 ### **User Services:**
+**Supported user roles**:
+- ADMIN 
+- CEO
+- RESTAURANT_MANAGER
+- ASSISTANT_MANAGER
+- WAITER
+- HOST
+- BARTENDER
+- BARBACK
+- BARISTA
+- BUSSER
+- HEAD_CHEF
+- SOUS_CHEF
+- PREP_COOK
+- LINE_COOK
+- DISHWASHER
 > #### User Management
 > - Add new user
 > - Get user info by given ID
