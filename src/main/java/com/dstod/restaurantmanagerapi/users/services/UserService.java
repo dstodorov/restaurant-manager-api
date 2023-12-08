@@ -127,12 +127,12 @@ public class UserService {
         Set<Role> roles = getRoleEntities(userDetailsRequest.roles());
 
         user.setFirstName(userDetailsRequest.firstName());
-        user.setMiddleName(userDetailsRequest.middleName() != null ? userDetailsRequest.middleName() : "N/A");
+        user.setMiddleName(userDetailsRequest.middleName() != null ? userDetailsRequest.middleName() : NOT_AVAILABLE);
         user.setLastName(userDetailsRequest.lastName());
         user.setUsername(userDetailsRequest.username());
         user.setPassword(userDetailsRequest.password());
         user.setRoles(roles);
-        user.setEmail(userDetailsRequest.email() != null ? userDetailsRequest.email() : "N/A");
+        user.setEmail(userDetailsRequest.email() != null ? userDetailsRequest.email() : NOT_AVAILABLE);
         user.setPhoneNumber(userDetailsRequest.phoneNumber());
 
         this.userRepository.save(user);
@@ -158,12 +158,12 @@ public class UserService {
         Set<Role> roles = getRoleEntities(createUserRequest.roles());
         return new User(
                 createUserRequest.firstName(),
-                createUserRequest.middleName() != null ? createUserRequest.middleName() : "N/A",
+                createUserRequest.middleName() != null ? createUserRequest.middleName() : NOT_AVAILABLE,
                 createUserRequest.lastName(),
                 createUserRequest.username(),
                 passwordEncoder.encode(createUserRequest.password()),
                 roles,
-                createUserRequest.email() != null ? createUserRequest.email() : "N/A",
+                createUserRequest.email() != null ? createUserRequest.email() : NOT_AVAILABLE,
                 createUserRequest.phoneNumber()
         );
     }
