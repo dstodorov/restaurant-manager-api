@@ -2,7 +2,7 @@ package com.dstod.restaurantmanagerapi.auth.controller;
 
 import com.dstod.restaurantmanagerapi.auth.models.dto.AuthenticationResponse;
 import com.dstod.restaurantmanagerapi.users.models.dtos.LoginRequest;
-import com.dstod.restaurantmanagerapi.users.services.AuthenticationService;
+import com.dstod.restaurantmanagerapi.auth.services.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

@@ -41,10 +41,8 @@ public class UserController {
 
     @Operation(summary = "Update user details by given ID")
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDetailsResponse> updateUserDetails(@PathVariable long userId,
-                                                                 @RequestBody @Valid UpdateUserRequest updateUserRequest) {
-        UserDetailsResponse updatedUserDetails = this.userService.updateUserDetails(userId, updateUserRequest);
-
-        return ResponseEntity.ok(updatedUserDetails);
+    public ResponseEntity<SuccessResponse> updateUserDetails(@PathVariable long userId,
+                                                             @RequestBody @Valid UpdateUserRequest updateUserRequest) {
+        return ResponseEntity.ok(this.userService.updateUser(userId, updateUserRequest));
     }
 }

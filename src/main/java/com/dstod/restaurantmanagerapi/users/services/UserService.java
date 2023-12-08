@@ -1,20 +1,24 @@
 package com.dstod.restaurantmanagerapi.users.services;
 
-import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
-import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
-import com.dstod.restaurantmanagerapi.users.models.dtos.*;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserDetailsDuplicationException;
 import com.dstod.restaurantmanagerapi.common.exceptions.users.UserNotFoundException;
+import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
+import com.dstod.restaurantmanagerapi.users.models.dtos.CreateUserRequest;
+import com.dstod.restaurantmanagerapi.users.models.dtos.UpdateUserRequest;
+import com.dstod.restaurantmanagerapi.users.models.dtos.UserDetailsResponse;
 import com.dstod.restaurantmanagerapi.users.models.entities.Role;
 import com.dstod.restaurantmanagerapi.users.models.entities.User;
 import com.dstod.restaurantmanagerapi.users.models.enums.RoleType;
 import com.dstod.restaurantmanagerapi.users.repositories.RoleRepository;
 import com.dstod.restaurantmanagerapi.users.repositories.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.*;
 
 @Service
 public class UserService {
@@ -40,23 +44,23 @@ public class UserService {
         User savedUser = this.userRepository.save(user);
         UserDetailsResponse savedUserDetailsResponse = mapUserEntityToUserInfoResponse(savedUser);
 
-        return new SuccessResponse(ApplicationMessages.USER_CREATED, new Date(), savedUserDetailsResponse);
+        return new SuccessResponse(USER_CREATED, new Date(), savedUserDetailsResponse);
     }
 
 
     public UserDetailsResponse getUserInfo(long userId) {
         User user = this.userRepository
                 .findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(String.format(ApplicationMessages.USER_ID_NOT_EXISTS, userId)));
+                .orElseThrow(() -> new UserNotFoundException(String.format(USER_ID_NOT_EXISTS, userId)));
 
         return mapUserEntityToUserInfoResponse(user);
     }
 
-    public UserDetailsResponse updateUserDetails(long userId, UpdateUserRequest userDetailsRequest) {
+    public SuccessResponse updateUser(long userId, UpdateUserRequest userDetailsRequest) {
         Optional<User> userById = this.userRepository.findById(userId);
 
         if (userById.isEmpty()) {
-            throw new UserNotFoundException(String.format(ApplicationMessages.USER_ID_NOT_EXISTS, userId));
+            throw new UserNotFoundException(String.format(USER_ID_NOT_EXISTS, userId));
         }
 
         ensureUserDetailsDoNotExist(
@@ -66,32 +70,52 @@ public class UserService {
                 userDetailsRequest.phoneNumber()
         );
 
-        updateUserEntity(userById.get(), userDetailsRequest);
+        User user = userById.get();
+        updateUserEntity(user, userDetailsRequest);
+        UserDetailsResponse savedUserDetailsResponse = mapUserEntityToUserInfoResponse(user);
 
-        return mapUserEntityToUserInfoResponse(userById.get());
+        return new SuccessResponse(String.format(USER_SUCCESSFULLY_UPDATED,
+                user.getUsername()),
+                new Date(),
+                savedUserDetailsResponse
+        );
     }
 
     private void ensureUserDetailsDoNotExist(long userId, String username, String email, String phoneNumber) {
-        Optional<User> userByUsername = userId > 0 ?
-                this.userRepository.findByUsernameExcludingUserId(username, userId)
-                : this.userRepository.findByUsername(username);
-        Optional<User> userByEmail = userId > 0 ?
-                this.userRepository.findByEmailExcludingUserId(email, userId)
-                : this.userRepository.findByEmail(email);
-        Optional<User> userByPhoneNumber = userId > 0 ?
-                this.userRepository.findByPhoneNumberExcludingUserId(phoneNumber, userId)
-                : this.userRepository.findByPhoneNumber(phoneNumber);
+        checkUserDetailDuplication(
+                userId,
+                username,
+                userRepository::findByUsername,
+                userRepository::findByUsernameExcludingUserId,
+                USERNAME_EXISTS
+        );
 
-        if (userByUsername.isPresent()) {
-            throw new UserDetailsDuplicationException(String.format(ApplicationMessages.USERNAME_EXISTS, username));
-        }
+        checkUserDetailDuplication(
+                userId,
+                email,
+                userRepository::findByEmail,
+                userRepository::findByEmailExcludingUserId,
+                EMAIL_EXISTS
+        );
 
-        if (userByEmail.isPresent()) {
-            throw new UserDetailsDuplicationException(String.format(ApplicationMessages.EMAIL_EXISTS, email));
-        }
+        checkUserDetailDuplication(
+                userId,
+                phoneNumber,
+                userRepository::findByPhoneNumber,
+                userRepository::findByPhoneNumberExcludingUserId,
+                PHONE_NUMBER_EXISTS
+        );
+    }
 
-        if (userByPhoneNumber.isPresent()) {
-            throw new UserDetailsDuplicationException(String.format(ApplicationMessages.PHONE_NUMBER_EXISTS, phoneNumber));
+    private void checkUserDetailDuplication(long userId,
+                                            String detail,
+                                            Function<String, Optional<User>> finder,
+                                            BiFunction<String, Long, Optional<User>> finderExcludingId,
+                                            String errorMessage
+    ) {
+        Optional<User> userByDetail = (userId > 0) ? finderExcludingId.apply(detail, userId) : finder.apply(detail);
+        if (userByDetail.isPresent()) {
+            throw new UserDetailsDuplicationException(String.format(errorMessage, detail));
         }
     }
 

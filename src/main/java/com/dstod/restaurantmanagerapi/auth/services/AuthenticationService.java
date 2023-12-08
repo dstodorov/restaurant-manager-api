@@ -1,4 +1,4 @@
-package com.dstod.restaurantmanagerapi.users.services;
+package com.dstod.restaurantmanagerapi.auth.services;
 
 import com.dstod.restaurantmanagerapi.auth.models.dto.AuthenticationResponse;
 import com.dstod.restaurantmanagerapi.common.exceptions.auth.RefreshTokenFailureException;

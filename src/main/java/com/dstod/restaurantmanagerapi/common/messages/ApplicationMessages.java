@@ -34,6 +34,7 @@ public interface ApplicationMessages {
     String REFRESH_TOKEN_FAILURE = "Token refresh failed";
     String INVENTORY_ISSUES = "There are inventory stock issues";
     String SUCCESSFUL_CHECKOUT = "Successful products checkout";
+    String USER_SUCCESSFULLY_UPDATED = "User %s was successfully updated";
     String GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND = "Product not found";
     String GLOBAL_EXCEPTION_DUPLICATED_PRODUCT = "Duplicated product";
     String GLOBAL_EXCEPTION_RECIPE_NOT_FOUND = "Recipe not found";
