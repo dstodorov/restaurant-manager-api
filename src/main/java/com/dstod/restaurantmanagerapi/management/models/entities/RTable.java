@@ -3,8 +3,8 @@ package com.dstod.restaurantmanagerapi.management.models.entities;
 import jakarta.persistence.*;
 
 @Entity
-@jakarta.persistence.Table(name = "tables")
-public class Table {
+@Table(name = "tables")
+public class RTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -15,24 +15,24 @@ public class Table {
     private boolean active = false;
     @ManyToOne
     @JoinColumn(name = "region_id")
-    private Region region;
+    private Section section;
 
-    public Table() {
+    public RTable() {
     }
 
-    public Table(long id, int tableNumber, int capacity, boolean active, Region region) {
+    public RTable(long id, int tableNumber, int capacity, boolean active, Section section) {
         this.id = id;
         this.tableNumber = tableNumber;
         this.capacity = capacity;
         this.active = active;
-        this.region = region;
+        this.section = section;
     }
 
     public long getId() {
         return id;
     }
 
-    public Table setId(long id) {
+    public RTable setId(long id) {
         this.id = id;
         return this;
     }
@@ -41,7 +41,7 @@ public class Table {
         return tableNumber;
     }
 
-    public Table setTableNumber(int tableNumber) {
+    public RTable setTableNumber(int tableNumber) {
         this.tableNumber = tableNumber;
         return this;
     }
@@ -50,17 +50,17 @@ public class Table {
         return capacity;
     }
 
-    public Table setCapacity(int capacity) {
+    public RTable setCapacity(int capacity) {
         this.capacity = capacity;
         return this;
     }
 
-    public Region getRegion() {
-        return region;
+    public Section getRegion() {
+        return section;
     }
 
-    public Table setRegion(Region region) {
-        this.region = region;
+    public RTable setRegion(Section section) {
+        this.section = section;
         return this;
     }
 
@@ -68,7 +68,7 @@ public class Table {
         return active;
     }
 
-    public Table setActive(boolean active) {
+    public RTable setActive(boolean active) {
         this.active = active;
         return this;
     }

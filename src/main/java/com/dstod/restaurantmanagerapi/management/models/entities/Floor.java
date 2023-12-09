@@ -18,16 +18,16 @@ public class Floor {
     private String floorName;
 
     @OneToMany(mappedBy = "id")
-    private List<Region> regions = new ArrayList<>();
+    private List<Section> sections = new ArrayList<>();
 
     public Floor() {
     }
 
-    public Floor(long id, int floor, String floorName, List<Region> regions) {
+    public Floor(long id, int floor, String floorName, List<Section> sections) {
         this.id = id;
         this.floor = floor;
         this.floorName = floorName;
-        this.regions = regions;
+        this.sections = sections;
     }
 
     public long getId() {
@@ -57,12 +57,12 @@ public class Floor {
         return this;
     }
 
-    public List<Region> getRegions() {
-        return regions;
+    public List<Section> getRegions() {
+        return sections;
     }
 
-    public Floor setRegions(List<Region> regions) {
-        this.regions = regions;
+    public Floor setRegions(List<Section> sections) {
+        this.sections = sections;
         return this;
     }
 }

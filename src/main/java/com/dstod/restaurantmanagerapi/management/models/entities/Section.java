@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @jakarta.persistence.Table(name = "regions")
-public class Region {
+public class Section {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -18,20 +18,20 @@ public class Region {
     private boolean active = false;
 
     @OneToMany(mappedBy = "id")
-    private List<Table> tables = new ArrayList<>();
+    private List<RTable> RTables = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "floor_plan_id")
     private Floor floor;
 
-    public Region() {
+    public Section() {
     }
 
-    public Region(long id, String regionName, boolean active, List<Table> tables, Floor floor) {
+    public Section(long id, String regionName, boolean active, List<RTable> RTables, Floor floor) {
         this.id = id;
         this.regionName = regionName;
         this.active = active;
-        this.tables = tables;
+        this.RTables = RTables;
         this.floor = floor;
     }
 
@@ -39,17 +39,17 @@ public class Region {
         return id;
     }
 
-    public Region setId(long id) {
+    public Section setId(long id) {
         this.id = id;
         return this;
     }
 
-    public List<Table> getTables() {
-        return tables;
+    public List<RTable> getTables() {
+        return RTables;
     }
 
-    public Region setTables(List<Table> tables) {
-        this.tables = tables;
+    public Section setTables(List<RTable> RTables) {
+        this.RTables = RTables;
         return this;
     }
 
@@ -57,7 +57,7 @@ public class Region {
         return floor;
     }
 
-    public Region setFloorPlan(Floor floor) {
+    public Section setFloorPlan(Floor floor) {
         this.floor = floor;
         return this;
     }
@@ -66,7 +66,7 @@ public class Region {
         return regionName;
     }
 
-    public Region setRegionName(String regionName) {
+    public Section setRegionName(String regionName) {
         this.regionName = regionName;
         return this;
     }
@@ -75,7 +75,7 @@ public class Region {
         return active;
     }
 
-    public Region setActive(boolean active) {
+    public Section setActive(boolean active) {
         this.active = active;
         return this;
     }
@@ -84,7 +84,7 @@ public class Region {
         return floor;
     }
 
-    public Region setFloor(Floor floor) {
+    public Section setFloor(Floor floor) {
         this.floor = floor;
         return this;
     }
