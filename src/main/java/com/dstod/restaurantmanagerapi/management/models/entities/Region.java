@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "regions")
+@jakarta.persistence.Table(name = "regions")
 public class Region {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +18,7 @@ public class Region {
     private boolean active = false;
 
     @OneToMany(mappedBy = "id")
-    private List<RestaurantTable> tables = new ArrayList<>();
+    private List<Table> tables = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "floor_plan_id")
@@ -27,7 +27,7 @@ public class Region {
     public Region() {
     }
 
-    public Region(long id, String regionName, boolean active, List<RestaurantTable> tables, Floor floor) {
+    public Region(long id, String regionName, boolean active, List<Table> tables, Floor floor) {
         this.id = id;
         this.regionName = regionName;
         this.active = active;
@@ -44,11 +44,11 @@ public class Region {
         return this;
     }
 
-    public List<RestaurantTable> getTables() {
+    public List<Table> getTables() {
         return tables;
     }
 
-    public Region setTables(List<RestaurantTable> tables) {
+    public Region setTables(List<Table> tables) {
         this.tables = tables;
         return this;
     }

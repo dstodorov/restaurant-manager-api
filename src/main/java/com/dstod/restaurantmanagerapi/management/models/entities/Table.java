@@ -3,8 +3,8 @@ package com.dstod.restaurantmanagerapi.management.models.entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "rm_tables")
-public class RestaurantTable {
+@jakarta.persistence.Table(name = "tables")
+public class Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -17,10 +17,10 @@ public class RestaurantTable {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    public RestaurantTable() {
+    public Table() {
     }
 
-    public RestaurantTable(long id, int tableNumber, int capacity, boolean active, Region region) {
+    public Table(long id, int tableNumber, int capacity, boolean active, Region region) {
         this.id = id;
         this.tableNumber = tableNumber;
         this.capacity = capacity;
@@ -32,7 +32,7 @@ public class RestaurantTable {
         return id;
     }
 
-    public RestaurantTable setId(long id) {
+    public Table setId(long id) {
         this.id = id;
         return this;
     }
@@ -41,7 +41,7 @@ public class RestaurantTable {
         return tableNumber;
     }
 
-    public RestaurantTable setTableNumber(int tableNumber) {
+    public Table setTableNumber(int tableNumber) {
         this.tableNumber = tableNumber;
         return this;
     }
@@ -50,7 +50,7 @@ public class RestaurantTable {
         return capacity;
     }
 
-    public RestaurantTable setCapacity(int capacity) {
+    public Table setCapacity(int capacity) {
         this.capacity = capacity;
         return this;
     }
@@ -59,7 +59,7 @@ public class RestaurantTable {
         return region;
     }
 
-    public RestaurantTable setRegion(Region region) {
+    public Table setRegion(Region region) {
         this.region = region;
         return this;
     }
@@ -68,7 +68,7 @@ public class RestaurantTable {
         return active;
     }
 
-    public RestaurantTable setActive(boolean active) {
+    public Table setActive(boolean active) {
         this.active = active;
         return this;
     }
