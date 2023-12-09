@@ -32,7 +32,7 @@ public class TableService {
 
         TableInfoDto savedTableInfoDto = mapToTableInfoDto(savedTable);
 
-        return new SuccessResponse("Successfully create table", new Date(), savedTableInfoDto);
+        return new SuccessResponse("Successfully created table", new Date(), savedTableInfoDto);
 
     }
 

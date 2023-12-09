@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@jakarta.persistence.Table(name = "regions")
+@Table(name = "sections")
 public class Section {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +21,7 @@ public class Section {
     private List<RTable> RTables = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "floor_plan_id")
+    @JoinColumn(name = "floor_id")
     private Floor floor;
 
     public Section() {
