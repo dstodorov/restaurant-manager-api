@@ -12,8 +12,8 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "region_name", nullable = false)
-    private String regionName;
+    @Column(name = "section_name", nullable = false)
+    private String sectionName;
 
     private boolean active = false;
 
@@ -27,9 +27,9 @@ public class Section {
     public Section() {
     }
 
-    public Section(long id, String regionName, boolean active, List<RTable> RTables, Floor floor) {
+    public Section(long id, String sectionName, boolean active, List<RTable> RTables, Floor floor) {
         this.id = id;
-        this.regionName = regionName;
+        this.sectionName = sectionName;
         this.active = active;
         this.RTables = RTables;
         this.floor = floor;
@@ -62,12 +62,12 @@ public class Section {
         return this;
     }
 
-    public String getRegionName() {
-        return regionName;
+    public String getSectionName() {
+        return sectionName;
     }
 
-    public Section setRegionName(String regionName) {
-        this.regionName = regionName;
+    public Section setSectionName(String regionName) {
+        this.sectionName = regionName;
         return this;
     }
 

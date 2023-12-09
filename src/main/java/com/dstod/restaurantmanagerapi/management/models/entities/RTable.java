@@ -9,22 +9,22 @@ public class RTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "table_number")
-    private int tableNumber;
-    private int capacity;
-
-    private boolean active = false;
+    private Long tableNumber;
+    @Column(nullable = false)
+    private Integer capacity;
+    private boolean deleted = false;
     @ManyToOne
-    @JoinColumn(name = "region_id")
+    @JoinColumn(name = "section_id")
     private Section section;
 
     public RTable() {
     }
 
-    public RTable(long id, int tableNumber, int capacity, boolean active, Section section) {
+    public RTable(long id, long tableNumber, int capacity, boolean deleted, Section section) {
         this.id = id;
         this.tableNumber = tableNumber;
         this.capacity = capacity;
-        this.active = active;
+        this.deleted = deleted;
         this.section = section;
     }
 
@@ -37,11 +37,11 @@ public class RTable {
         return this;
     }
 
-    public int getTableNumber() {
+    public long getTableNumber() {
         return tableNumber;
     }
 
-    public RTable setTableNumber(int tableNumber) {
+    public RTable setTableNumber(long tableNumber) {
         this.tableNumber = tableNumber;
         return this;
     }
@@ -55,7 +55,7 @@ public class RTable {
         return this;
     }
 
-    public Section getRegion() {
+    public Section getSection() {
         return section;
     }
 
@@ -64,12 +64,12 @@ public class RTable {
         return this;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean isDeleted() {
+        return deleted;
     }
 
-    public RTable setActive(boolean active) {
-        this.active = active;
+    public RTable setDeleted(boolean active) {
+        this.deleted = active;
         return this;
     }
 }
