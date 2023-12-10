@@ -35,6 +35,8 @@ public interface ApplicationMessages {
     String INVENTORY_ISSUES = "There are inventory stock issues";
     String SUCCESSFUL_CHECKOUT = "Successful products checkout";
     String USER_SUCCESSFULLY_UPDATED = "User %s was successfully updated";
+    String TABLE_SUCCESSFULLY_CREATED = "Successfully created table";
+    String SECTION_NOT_EXIST = "Section with name %s, does not exist";
     String NOT_AVAILABLE = "N/A";
     String GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND = "Product not found";
     String GLOBAL_EXCEPTION_DUPLICATED_PRODUCT = "Duplicated product";
@@ -49,4 +51,5 @@ public interface ApplicationMessages {
     String GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT = "Missing product in the inventory";
     String GLOBAL_EXCEPTION_VALIDATION_ERROR = "Validation error";
     String GLOBAL_EXCEPTION_AUTHORIZATION = "Not authorized";
+    String GLOBAL_EXCEPTION_MISSING_SECTION = "Section not found";
 }

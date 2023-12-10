@@ -2,6 +2,7 @@ package com.dstod.restaurantmanagerapi.common.exceptions;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.auth.RefreshTokenFailureException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
+import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDoesNotExistException;
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.models.ErrorDetails;
 import com.dstod.restaurantmanagerapi.common.models.FailureResponse;
@@ -87,6 +88,8 @@ public class GlobalExceptionHandler {
             return new ErrorDetails(exception.getMessage(), HttpStatus.BAD_REQUEST);
         } else if (exception instanceof InventoryProductNotFoundException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT, HttpStatus.NOT_FOUND);
+        } else if (exception instanceof SectionDoesNotExistException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISSING_SECTION, HttpStatus.NOT_FOUND);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
