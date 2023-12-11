@@ -1,9 +1,12 @@
 package com.dstod.restaurantmanagerapi.management.services;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDoesNotExistException;
+import com.dstod.restaurantmanagerapi.common.exceptions.management.TableNotFoundException;
+import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.management.models.dtos.CreateTableRequest;
 import com.dstod.restaurantmanagerapi.management.models.dtos.TableInfoDto;
+import com.dstod.restaurantmanagerapi.management.models.dtos.UpdateTableRequest;
 import com.dstod.restaurantmanagerapi.management.models.entities.RTable;
 import com.dstod.restaurantmanagerapi.management.models.entities.Section;
 import com.dstod.restaurantmanagerapi.management.repositories.SectionRepository;
@@ -35,6 +38,25 @@ public class TableService {
         TableInfoDto savedTableInfoDto = mapToTableInfoDto(savedTable);
 
         return new SuccessResponse(TABLE_SUCCESSFULLY_CREATED, new Date(), savedTableInfoDto);
+
+    }
+
+    public SuccessResponse updateTable(long id, UpdateTableRequest request) {
+        RTable tableById = this.tableRepository
+                .findById(id)
+                .orElseThrow(() -> new TableNotFoundException(String.format(TABLE_NOT_FOUND, id)));
+        Section sectionByName = this
+                .sectionRepository
+                .findBySectionName(request.section())
+                .orElseThrow(() -> new SectionDoesNotExistException(String.format(SECTION_NOT_EXIST, request.section())));
+
+        tableById.setSection(sectionByName);
+
+        RTable savedTable = this.tableRepository.save(tableById);
+
+        TableInfoDto savedTableInfo = mapToTableInfoDto(savedTable);
+
+        return new SuccessResponse(TABLE_SUCCESSFULLY_UPDATED, new Date(), savedTableInfo);
 
     }
 

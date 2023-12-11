@@ -59,7 +59,7 @@ public class RTable {
         return section;
     }
 
-    public RTable setRegion(Section section) {
+    public RTable setSection(Section section) {
         this.section = section;
         return this;
     }
