@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class TableService {
@@ -66,6 +67,14 @@ public class TableService {
                 .orElseThrow(() -> new TableNotFoundException(String.format(TABLE_NOT_FOUND, id)));
 
         return mapToTableInfoDto(tableById);
+    }
+
+    public List<TableInfoDto> getAllTables() {
+        return this.tableRepository
+                .findAll()
+                .stream()
+                .map(this::mapToTableInfoDto)
+                .toList();
     }
 
 

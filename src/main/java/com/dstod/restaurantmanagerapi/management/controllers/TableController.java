@@ -12,6 +12,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tables")
@@ -40,5 +41,10 @@ public class TableController {
     @GetMapping("/{id}")
     public ResponseEntity<TableInfoDto> getTableInfo(@PathVariable Long id) {
         return ResponseEntity.ok(this.tableService.getTableInfo(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TableInfoDto>> getAllTables() {
+        return ResponseEntity.ok(this.tableService.getAllTables());
     }
 }
