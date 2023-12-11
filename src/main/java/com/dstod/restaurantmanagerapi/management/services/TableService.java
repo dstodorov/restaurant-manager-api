@@ -51,14 +51,23 @@ public class TableService {
                 .orElseThrow(() -> new SectionDoesNotExistException(String.format(SECTION_NOT_EXIST, request.section())));
 
         tableById.setSection(sectionByName);
+        tableById.setCapacity(request.capacity());
 
         RTable savedTable = this.tableRepository.save(tableById);
 
         TableInfoDto savedTableInfo = mapToTableInfoDto(savedTable);
 
         return new SuccessResponse(TABLE_SUCCESSFULLY_UPDATED, new Date(), savedTableInfo);
-
     }
+
+    public TableInfoDto getTableInfo(Long id) {
+        RTable tableById = this.tableRepository
+                .findById(id)
+                .orElseThrow(() -> new TableNotFoundException(String.format(TABLE_NOT_FOUND, id)));
+
+        return mapToTableInfoDto(tableById);
+    }
+
 
     private RTable mapToRTable(CreateTableRequest request, Section section) {
         return new RTable(

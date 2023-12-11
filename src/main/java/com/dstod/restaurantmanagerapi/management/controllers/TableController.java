@@ -36,4 +36,9 @@ public class TableController {
     public ResponseEntity<SuccessResponse> updateTable(@Valid @RequestBody UpdateTableRequest request, @PathVariable long id) {
         return ResponseEntity.ok(tableService.updateTable(id, request));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TableInfoDto> getTableInfo(@PathVariable Long id) {
+        return ResponseEntity.ok(this.tableService.getTableInfo(id));
+    }
 }
