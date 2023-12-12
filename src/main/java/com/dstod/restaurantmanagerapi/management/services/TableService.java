@@ -88,7 +88,7 @@ public class TableService {
         );
     }
 
-    private TableInfoDto mapToTableInfoDto(RTable table) {
+    protected TableInfoDto mapToTableInfoDto(RTable table) {
         return new TableInfoDto(
                 table.getId(),
                 table.getTableNumber(),

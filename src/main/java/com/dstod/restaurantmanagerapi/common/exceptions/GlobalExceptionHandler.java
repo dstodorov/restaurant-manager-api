@@ -3,6 +3,7 @@ package com.dstod.restaurantmanagerapi.common.exceptions;
 import com.dstod.restaurantmanagerapi.common.exceptions.auth.RefreshTokenFailureException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
 import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDoesNotExistException;
+import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDuplicationException;
 import com.dstod.restaurantmanagerapi.common.exceptions.management.TableNotFoundException;
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.models.ErrorDetails;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static org.apache.logging.log4j.ThreadContext.isEmpty;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -93,6 +92,8 @@ public class GlobalExceptionHandler {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISSING_SECTION, HttpStatus.NOT_FOUND);
         } else if (exception instanceof TableNotFoundException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_TABLE_NOT_FOUND, HttpStatus.NOT_FOUND);
+        } else if (exception instanceof SectionDuplicationException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_SECTION_DUPLICATION, HttpStatus.CONFLICT);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }

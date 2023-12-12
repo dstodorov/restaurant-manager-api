@@ -88,4 +88,13 @@ public class Section {
         this.floor = floor;
         return this;
     }
+
+    public List<RTable> getRTables() {
+        return RTables;
+    }
+
+    public Section setRTables(List<RTable> RTables) {
+        this.RTables = RTables;
+        return this;
+    }
 }
