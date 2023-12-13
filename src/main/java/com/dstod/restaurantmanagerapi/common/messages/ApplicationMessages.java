@@ -39,6 +39,7 @@ public interface ApplicationMessages {
     String TABLE_SUCCESSFULLY_UPDATED = "Successfully updated table";
     String SECTION_NOT_EXIST = "Section with name %s, does not exist";
     String SECTION_DUPLICATION = "Section with name %s already exists";
+    String SECTION_SUCCESSFULLY_UPDATED = "Successfully updated section";
     String TABLE_NOT_FOUND = "Table with id %d was not found";
     String NOT_AVAILABLE = "N/A";
     String GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND = "Product not found";

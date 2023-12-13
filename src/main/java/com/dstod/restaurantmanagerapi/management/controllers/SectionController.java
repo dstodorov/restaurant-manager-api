@@ -4,13 +4,11 @@ import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.management.models.dtos.CreateSectionRequest;
 import com.dstod.restaurantmanagerapi.management.models.dtos.CreateSectionResponse;
 import com.dstod.restaurantmanagerapi.management.models.dtos.TableInfoDto;
+import com.dstod.restaurantmanagerapi.management.models.dtos.UpdateSectionRequest;
 import com.dstod.restaurantmanagerapi.management.services.SectionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -32,4 +30,10 @@ public class SectionController {
         UriComponents uriComponents = uri.path("/tables/{id}").buildAndExpand(savedSection.id());
         return ResponseEntity.created(uriComponents.toUri()).body(successResponse);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SuccessResponse> updateSection(@Valid @RequestBody UpdateSectionRequest request, @PathVariable Long id) {
+        return ResponseEntity.ok(this.sectionService.updateSection(request, id));
+    }
+
 }

@@ -2,7 +2,7 @@ package com.dstod.restaurantmanagerapi.management.services;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDoesNotExistException;
 import com.dstod.restaurantmanagerapi.common.exceptions.management.TableNotFoundException;
-import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
+import com.dstod.restaurantmanagerapi.common.exceptions.management.TableNotFoundException;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.management.models.dtos.CreateTableRequest;
 import com.dstod.restaurantmanagerapi.management.models.dtos.TableInfoDto;

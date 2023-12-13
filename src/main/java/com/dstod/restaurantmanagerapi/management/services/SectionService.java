@@ -1,11 +1,9 @@
 package com.dstod.restaurantmanagerapi.management.services;
 
+import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDoesNotExistException;
 import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDuplicationException;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
-import com.dstod.restaurantmanagerapi.management.models.dtos.CreateSectionRequest;
-import com.dstod.restaurantmanagerapi.management.models.dtos.CreateSectionResponse;
-import com.dstod.restaurantmanagerapi.management.models.dtos.SectionInfoDto;
-import com.dstod.restaurantmanagerapi.management.models.dtos.TableInfoDto;
+import com.dstod.restaurantmanagerapi.management.models.dtos.*;
 import com.dstod.restaurantmanagerapi.management.models.entities.Floor;
 import com.dstod.restaurantmanagerapi.management.models.entities.Section;
 import com.dstod.restaurantmanagerapi.management.repositories.FloorRepository;
@@ -50,6 +48,36 @@ public class SectionService {
         return new SuccessResponse("Section successfully created", new Date(), savedSectionResponse);
     }
 
+    public SuccessResponse updateSection(UpdateSectionRequest request, Long id) {
+        this.sectionRepository.findBySectionNameExcludingId(request.sectionName(), id).ifPresent(e -> {
+            throw new SectionDuplicationException(String.format(SECTION_DUPLICATION, request.sectionName()));
+        });
+
+        Section section = this.sectionRepository
+                .findById(id)
+                .orElseThrow(() -> new SectionDoesNotExistException(String.format("Section with id %d does not exist", id)));
+
+
+        setSectionDetails(request, section);
+
+        Section savedSection = this.sectionRepository.save(section);
+        CreateSectionResponse sectionResponse = mapToSectionResponse(savedSection);
+
+        return new SuccessResponse(SECTION_SUCCESSFULLY_UPDATED, new Date(), sectionResponse);
+    }
+
+    private void setSectionDetails(UpdateSectionRequest request, Section section) {
+        section.setSectionName(request.sectionName());
+
+        if (request.floor() != null) {
+            Floor floor = getFloor(this.floorRepository.findFloorByFloor(request.floor()));
+            section.setFloor(floor);
+        }
+        if (request.active() != null) {
+            section.setActive(request.active());
+        }
+    }
+
     private CreateSectionResponse mapToSectionResponse(Section section) {
         return new CreateSectionResponse(
                 section.getId(),
@@ -76,11 +104,7 @@ public class SectionService {
     }
 
     private Section createSectionEntity(CreateSectionRequest request, Optional<Floor> floorByFloor) {
-        Floor floor = floorByFloor.orElseGet(() ->
-                this.floorRepository
-                        .findFloorByFloor(1)
-                        .orElseGet(() -> this.floorRepository
-                                .save(new Floor(0, 1, "N/A", new ArrayList<>()))));
+        Floor floor = getFloor(floorByFloor);
 
         return new Section(
                 0L,
@@ -91,8 +115,11 @@ public class SectionService {
         );
     }
 
-    public SuccessResponse updateSection() {
-        return null;
+    private Floor getFloor(Optional<Floor> floorByFloor) {
+        return floorByFloor.orElseGet(() ->
+                this.floorRepository
+                        .findFloorByFloor(1)
+                        .orElseGet(() -> this.floorRepository
+                                .save(new Floor(0, 1, "N/A", new ArrayList<>()))));
     }
-
 }
