@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface SectionRepository extends JpaRepository<Section, Long> {
 
     Optional<Section> findBySectionName(String sectionName);
-    @Query("select s from Section s where s.sectionName = :sectionName and s.id = :id")
+    @Query("select s from Section s where s.sectionName = :sectionName and s.id <> :id")
     Optional<Section> findBySectionNameExcludingId(String sectionName, Long id);
 }

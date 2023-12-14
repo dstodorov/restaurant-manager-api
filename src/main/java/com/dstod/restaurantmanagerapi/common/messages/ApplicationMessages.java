@@ -37,9 +37,12 @@ public interface ApplicationMessages {
     String USER_SUCCESSFULLY_UPDATED = "User %s was successfully updated";
     String TABLE_SUCCESSFULLY_CREATED = "Successfully created table";
     String TABLE_SUCCESSFULLY_UPDATED = "Successfully updated table";
-    String SECTION_NOT_EXIST = "Section with name %s, does not exist";
+    String SECTION_NAME_NOT_EXIST = "Section with name %s, does not exist";
+    String SECTION_ID_NOT_EXIST = "Section with id %d does not exist";
+    String FLOOR_ID_NOT_EXIST = "Floor number %d does not exist";
     String SECTION_DUPLICATION = "Section with name %s already exists";
     String SECTION_SUCCESSFULLY_UPDATED = "Successfully updated section";
+    String SECTION_SUCCESSFULLY_CREATED = "Successfully created section";
     String TABLE_NOT_FOUND = "Table with id %d was not found";
     String NOT_AVAILABLE = "N/A";
     String GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND = "Product not found";
@@ -58,4 +61,5 @@ public interface ApplicationMessages {
     String GLOBAL_EXCEPTION_MISSING_SECTION = "Section not found";
     String GLOBAL_EXCEPTION_TABLE_NOT_FOUND = "Table not found";
     String GLOBAL_EXCEPTION_SECTION_DUPLICATION = "Section duplication";
+    String GLOBAL_EXCEPTION_FLOOR_DUPLICATION = "Floor does not exist";
 }

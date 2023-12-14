@@ -2,7 +2,6 @@ package com.dstod.restaurantmanagerapi.management.services;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDoesNotExistException;
 import com.dstod.restaurantmanagerapi.common.exceptions.management.TableNotFoundException;
-import com.dstod.restaurantmanagerapi.common.exceptions.management.TableNotFoundException;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.management.models.dtos.CreateTableRequest;
 import com.dstod.restaurantmanagerapi.management.models.dtos.TableInfoDto;
@@ -31,7 +30,7 @@ public class TableService {
     public SuccessResponse createTable(CreateTableRequest request) {
         Section section = this.sectionRepository
                 .findBySectionName(request.section())
-                .orElseThrow(() -> new SectionDoesNotExistException(String.format(SECTION_NOT_EXIST, request.section())));
+                .orElseThrow(() -> new SectionDoesNotExistException(String.format(SECTION_NAME_NOT_EXIST, request.section())));
 
         RTable table = mapToRTable(request, section);
         RTable savedTable = this.tableRepository.save(table);
@@ -49,7 +48,7 @@ public class TableService {
         Section sectionByName = this
                 .sectionRepository
                 .findBySectionName(request.section())
-                .orElseThrow(() -> new SectionDoesNotExistException(String.format(SECTION_NOT_EXIST, request.section())));
+                .orElseThrow(() -> new SectionDoesNotExistException(String.format(SECTION_NAME_NOT_EXIST, request.section())));
 
         tableById.setSection(sectionByName);
         tableById.setCapacity(request.capacity());

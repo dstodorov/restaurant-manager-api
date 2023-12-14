@@ -17,7 +17,7 @@ public class Section {
 
     private boolean active = false;
 
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "section", fetch = FetchType.EAGER)
     private List<RTable> RTables = new ArrayList<>();
 
     @ManyToOne
