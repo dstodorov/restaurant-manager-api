@@ -87,9 +87,11 @@ public class SectionService {
     }
 
     private void validateFloor(UpdateSectionRequest request) {
-        this.floorRepository
-                .findFloorByFloor(request.floor())
-                .orElseThrow(() -> new FloorDoesNotExistException(String.format(FLOOR_ID_NOT_EXIST, request.floor())));
+        if (request.floor() != null) {
+            this.floorRepository
+                    .findFloorByFloor(request.floor())
+                    .orElseThrow(() -> new FloorDoesNotExistException(String.format(FLOOR_ID_NOT_EXIST, request.floor())));
+        }
     }
 
     private static void ensureSectionDoesNotExist(CreateSectionRequest request, Optional<Section> sectionBySectionName) {
