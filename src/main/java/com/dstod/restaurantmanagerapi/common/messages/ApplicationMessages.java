@@ -40,6 +40,7 @@ public interface ApplicationMessages {
     String SECTION_NAME_NOT_EXIST = "Section with name %s, does not exist";
     String SECTION_ID_NOT_EXIST = "Section with id %d does not exist";
     String FLOOR_ID_NOT_EXIST = "Floor number %d does not exist";
+    String FLOOR_DUPLICATION = "Floor number %d already exist";
     String SECTION_DUPLICATION = "Section with name %s already exists";
     String SECTION_SUCCESSFULLY_UPDATED = "Successfully updated section";
     String SECTION_SUCCESSFULLY_CREATED = "Successfully created section";
@@ -61,5 +62,6 @@ public interface ApplicationMessages {
     String GLOBAL_EXCEPTION_MISSING_SECTION = "Section not found";
     String GLOBAL_EXCEPTION_TABLE_NOT_FOUND = "Table not found";
     String GLOBAL_EXCEPTION_SECTION_DUPLICATION = "Section duplication";
-    String GLOBAL_EXCEPTION_FLOOR_DUPLICATION = "Floor does not exist";
+    String GLOBAL_EXCEPTION_FLOOR_DUPLICATION = "Floor duplication";
+    String GLOBAL_EXCEPTION_MISSING_FLOOR = "Floor does not exist";
 }

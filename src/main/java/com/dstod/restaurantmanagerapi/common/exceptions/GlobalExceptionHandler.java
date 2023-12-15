@@ -2,10 +2,7 @@ package com.dstod.restaurantmanagerapi.common.exceptions;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.auth.RefreshTokenFailureException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
-import com.dstod.restaurantmanagerapi.common.exceptions.management.FloorDoesNotExistException;
-import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDoesNotExistException;
-import com.dstod.restaurantmanagerapi.common.exceptions.management.SectionDuplicationException;
-import com.dstod.restaurantmanagerapi.common.exceptions.management.TableNotFoundException;
+import com.dstod.restaurantmanagerapi.common.exceptions.management.*;
 import com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages;
 import com.dstod.restaurantmanagerapi.common.models.ErrorDetails;
 import com.dstod.restaurantmanagerapi.common.models.FailureResponse;
@@ -96,6 +93,8 @@ public class GlobalExceptionHandler {
         } else if (exception instanceof SectionDuplicationException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_SECTION_DUPLICATION, HttpStatus.CONFLICT);
         } else if (exception instanceof FloorDoesNotExistException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISSING_FLOOR, HttpStatus.NOT_FOUND);
+        } else if (exception instanceof FloorDuplicationException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_FLOOR_DUPLICATION, HttpStatus.CONFLICT);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);

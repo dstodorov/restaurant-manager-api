@@ -21,12 +21,14 @@ import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages
 @Service
 public class SectionService {
     private final SectionRepository sectionRepository;
+    private final FloorService floorService;
     private final FloorRepository floorRepository;
 
     private final TableService tableService;
 
-    public SectionService(SectionRepository sectionRepository, FloorRepository floorRepository, TableService tableService) {
+    public SectionService(SectionRepository sectionRepository, FloorService floorService, FloorRepository floorRepository, TableService tableService) {
         this.sectionRepository = sectionRepository;
+        this.floorService = floorService;
         this.floorRepository = floorRepository;
         this.tableService = tableService;
     }
@@ -104,7 +106,7 @@ public class SectionService {
         section.setSectionName(request.sectionName());
 
         if (request.floor() != null) {
-            Floor floor = getFloor(this.floorRepository.findFloorByFloor(request.floor()));
+            Floor floor = floorService.getFloor(this.floorRepository.findFloorByFloor(request.floor()));
             section.setFloor(floor);
         }
         if (request.active() != null) {
@@ -138,7 +140,7 @@ public class SectionService {
     }
 
     private Section createSectionEntity(CreateSectionRequest request, Optional<Floor> floorByFloor) {
-        Floor floor = getFloor(floorByFloor);
+        Floor floor = floorService.getFloor(floorByFloor);
 
         return new Section(
                 0L,
@@ -147,13 +149,5 @@ public class SectionService {
                 new ArrayList<>(),
                 floor
         );
-    }
-
-    private Floor getFloor(Optional<Floor> floorByFloor) {
-        return floorByFloor.orElseGet(() ->
-                this.floorRepository
-                        .findFloorByFloor(1)
-                        .orElseGet(() -> this.floorRepository
-                                .save(new Floor(0, 1, NOT_AVAILABLE, new ArrayList<>()))));
     }
 }

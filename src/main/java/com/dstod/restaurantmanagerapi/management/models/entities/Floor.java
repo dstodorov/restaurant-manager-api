@@ -12,7 +12,7 @@ public class Floor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private int floor;
+    private long floor;
 
     @Column(name = "floor_name")
     private String floorName;
@@ -23,7 +23,7 @@ public class Floor {
     public Floor() {
     }
 
-    public Floor(long id, int floor, String floorName, List<Section> sections) {
+    public Floor(long id, long floor, String floorName, List<Section> sections) {
         this.id = id;
         this.floor = floor;
         this.floorName = floorName;
@@ -39,7 +39,7 @@ public class Floor {
         return this;
     }
 
-    public int getFloor() {
+    public Long getFloor() {
         return floor;
     }
 
