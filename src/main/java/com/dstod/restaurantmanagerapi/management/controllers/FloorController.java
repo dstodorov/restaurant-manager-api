@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -42,5 +43,15 @@ public class FloorController {
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse> updateFloor(@RequestBody @Valid UpdateFloorRequest request, @PathVariable Long id) {
         return ResponseEntity.ok(this.floorService.updateFloor(id, request));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FloorInfoDto> getFloor(@PathVariable Long id) {
+        return ResponseEntity.ok(this.floorService.getFloorById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<FloorInfoDto>> getAllFloors() {
+        return ResponseEntity.ok(this.floorService.getAllFloors());
     }
 }

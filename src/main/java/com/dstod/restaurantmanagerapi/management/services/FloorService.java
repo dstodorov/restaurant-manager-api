@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.*;
@@ -57,15 +58,21 @@ public class FloorService {
     }
 
     public void deleteFloor() {
-
     }
 
-    public void getAllFloors() {
-
+    public List<FloorInfoDto> getAllFloors() {
+        return this
+                .floorRepository
+                .findAll()
+                .stream()
+                .map(this::mapToFloorInfo)
+                .toList();
     }
 
-    public void getFloorById() {
+    public FloorInfoDto getFloorById(Long id) {
+        Floor floor = this.floorRepository.findById(id).orElseThrow(() -> new FloorDoesNotExistException(String.format("Floor with id %d does not exist", id)));
 
+        return mapToFloorInfo(floor);
     }
 
     private FloorInfoDto mapToFloorInfo(Floor floorEntity) {
