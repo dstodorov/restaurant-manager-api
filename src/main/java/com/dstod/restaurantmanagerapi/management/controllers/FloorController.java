@@ -3,13 +3,11 @@ package com.dstod.restaurantmanagerapi.management.controllers;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.management.models.dtos.CreateFloorRequest;
 import com.dstod.restaurantmanagerapi.management.models.dtos.FloorInfoDto;
+import com.dstod.restaurantmanagerapi.management.models.dtos.UpdateFloorRequest;
 import com.dstod.restaurantmanagerapi.management.services.FloorService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -39,5 +37,10 @@ public class FloorController {
         UriComponents uriComponents = uri.path("/floors/{id}").buildAndExpand(savedFloor.id());
 
         return ResponseEntity.created(uriComponents.toUri()).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SuccessResponse> updateFloor(@RequestBody @Valid UpdateFloorRequest request, @PathVariable Long id) {
+        return ResponseEntity.ok(this.floorService.updateFloor(id, request));
     }
 }

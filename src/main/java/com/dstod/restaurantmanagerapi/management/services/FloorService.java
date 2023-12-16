@@ -1,8 +1,10 @@
 package com.dstod.restaurantmanagerapi.management.services;
 
+import com.dstod.restaurantmanagerapi.common.exceptions.management.FloorDoesNotExistException;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
 import com.dstod.restaurantmanagerapi.management.models.dtos.CreateFloorRequest;
 import com.dstod.restaurantmanagerapi.management.models.dtos.FloorInfoDto;
+import com.dstod.restaurantmanagerapi.management.models.dtos.UpdateFloorRequest;
 import com.dstod.restaurantmanagerapi.management.models.entities.Floor;
 import com.dstod.restaurantmanagerapi.management.repositories.FloorRepository;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,30 @@ public class FloorService {
         FloorInfoDto savedFloorInfoDto = mapToFloorInfo(savedFloor);
 
         return new SuccessResponse("Successfully created floor", new Date(), savedFloorInfoDto);
+    }
+
+    public SuccessResponse updateFloor(Long id, UpdateFloorRequest request) {
+        Floor floor = this.floorRepository.findById(id).orElseThrow(() -> new FloorDoesNotExistException(String.format("Floor with id %d does not exist", id)));
+
+        floor.setFloorName(request.floorName());
+
+        Floor savedFloor = this.floorRepository.save(floor);
+
+        FloorInfoDto floorInfoDto = mapToFloorInfo(savedFloor);
+
+        return new SuccessResponse("Successfully updated floor", new Date(), floorInfoDto);
+    }
+
+    public void deleteFloor() {
+
+    }
+
+    public void getAllFloors() {
+
+    }
+
+    public void getFloorById() {
+
     }
 
     private FloorInfoDto mapToFloorInfo(Floor floorEntity) {
