@@ -96,6 +96,8 @@ public class GlobalExceptionHandler {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MISSING_FLOOR, HttpStatus.NOT_FOUND);
         } else if (exception instanceof FloorDuplicationException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_FLOOR_DUPLICATION, HttpStatus.CONFLICT);
+        } else if (exception instanceof MenuTypeNotExistException) {
+            return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MENU_DETAILS_ERROR, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }

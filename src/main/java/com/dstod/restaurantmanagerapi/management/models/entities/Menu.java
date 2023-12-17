@@ -1,7 +1,7 @@
 package com.dstod.restaurantmanagerapi.management.models.entities;
 
 
-import com.dstod.restaurantmanagerapi.management.models.MenuType;
+import com.dstod.restaurantmanagerapi.management.models.enums.MenuType;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

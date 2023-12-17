@@ -64,4 +64,5 @@ public interface ApplicationMessages {
     String GLOBAL_EXCEPTION_SECTION_DUPLICATION = "Section duplication";
     String GLOBAL_EXCEPTION_FLOOR_DUPLICATION = "Floor duplication";
     String GLOBAL_EXCEPTION_MISSING_FLOOR = "Floor does not exist";
+    String GLOBAL_EXCEPTION_MENU_DETAILS_ERROR = "Menu details error";
 }
