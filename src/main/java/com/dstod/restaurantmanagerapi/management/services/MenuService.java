@@ -9,6 +9,7 @@ import com.dstod.restaurantmanagerapi.management.models.enums.MenuType;
 import com.dstod.restaurantmanagerapi.management.repositories.MenuRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.NOT_AVAILABLE;
@@ -22,21 +23,32 @@ public class MenuService {
     }
 
     public SuccessResponse createMenu(CreateMenuRequest request) {
-        if (!MenuType.isValidMenuType(request.menuType())) {
-            throw new MenuTypeNotExistException(String.format("Menu type %s is not valid", request.menuType()));
-        }
+        validateMenuType(request.menuType());
 
-        Menu menu = new Menu();
-        menu.setMenuType(MenuType.valueOf(request.menuType()));
-        menu.setId(0L);
-        menu.setLastUpdate(new Date());
-        menu.setRevision(0.1);
+        Menu menu = createMenuEntity(request);
 
         Menu savedMenu = menuRepository.save(menu);
 
         BaseMenuInfoDto baseMenuInfoDto = mapToBaseMenuInfoDto(savedMenu);
 
         return new SuccessResponse("Successfully created menu", new Date(), baseMenuInfoDto);
+    }
+
+    private static void validateMenuType(String menuType) {
+        if (!MenuType.isValidMenuType(menuType)) {
+            throw new MenuTypeNotExistException(String.format("Menu type %s is not valid", menuType));
+        }
+    }
+
+    private Menu createMenuEntity(CreateMenuRequest request) {
+        return new Menu (
+                0L,
+                MenuType.valueOf(request.menuType()),
+                new ArrayList<>(),
+                1.0,
+                new Date(),
+                null
+        );
     }
 
     private BaseMenuInfoDto mapToBaseMenuInfoDto(Menu menu) {
