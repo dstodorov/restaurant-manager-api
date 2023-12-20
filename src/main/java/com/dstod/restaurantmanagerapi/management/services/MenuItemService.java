@@ -23,9 +23,6 @@ import java.util.Optional;
 
 @Service
 public class MenuItemService {
-    private static final String BOTH_MISSING_MESSAGE = "Both product and recipe are missing. Please provide either a valid product or recipe for the menu item.";
-    private static final String BOTH_PROVIDED_MESSAGE = "Both product and recipe are provided. Please provide only one of them.";
-
     private final MenuItemRepository menuItemRepository;
     private final MenuRepository menuRepository;
     private final ProductRepository productRepository;
@@ -56,7 +53,7 @@ public class MenuItemService {
         }
 
         Menu menu = this.menuRepository.findById(request.menuId()).orElseThrow(
-                () -> new MenuNotFoundException(String.format("Menu with id %d was not found", request.menuId()))
+                () -> new MenuNotFoundException(String.format(ApplicationMessages.MENU_NOT_FOUND, request.menuId()))
         );
 
         MenuItem menuItem = createMenuItemEntity(request, product, recipe, menu);
@@ -65,7 +62,7 @@ public class MenuItemService {
 
         CreateMenuItemResponse createMenuItemResponse = mapToCreateMenuItemResponse(savedMenuItem);
 
-        return new SuccessResponse("Successfully created menu item", new Date(), createMenuItemResponse);
+        return new SuccessResponse(ApplicationMessages.MENU_ITEM_SUCCESSFULLY_CREATED, new Date(), createMenuItemResponse);
     }
 
     private CreateMenuItemResponse mapToCreateMenuItemResponse(MenuItem menuItem) {
@@ -110,11 +107,11 @@ public class MenuItemService {
 
     private void validateMenuItemInput(CreateMenuItemRequest request) {
         if (request.productId() == null && request.recipeId() == null) {
-            throw new InvalidMenuItemInputException(BOTH_MISSING_MESSAGE);
+            throw new InvalidMenuItemInputException(ApplicationMessages.BOTH_MISSING_MESSAGE);
         }
 
         if (request.productId() != null && request.recipeId() != null) {
-            throw new InvalidMenuItemInputException(BOTH_PROVIDED_MESSAGE);
+            throw new InvalidMenuItemInputException(ApplicationMessages.BOTH_PROVIDED_MESSAGE);
         }
     }
 }

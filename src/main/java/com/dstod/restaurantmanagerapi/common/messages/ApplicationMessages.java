@@ -45,7 +45,11 @@ public interface ApplicationMessages {
     String SECTION_SUCCESSFULLY_UPDATED = "Successfully updated section";
     String SECTION_SUCCESSFULLY_CREATED = "Successfully created section";
     String TABLE_NOT_FOUND = "Table with id %d was not found";
+    String MENU_ITEM_SUCCESSFULLY_CREATED = "Successfully created menu item";
+    String MENU_NOT_FOUND = "Menu with id %d was not found";
     String NOT_AVAILABLE = "N/A";
+    String BOTH_MISSING_MESSAGE = "Both product and recipe are missing. Please provide either a valid product or recipe for the menu item.";
+    String BOTH_PROVIDED_MESSAGE = "Both product and recipe are provided. Please provide only one of them.";
     String GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND = "Product not found";
     String GLOBAL_EXCEPTION_DUPLICATED_PRODUCT = "Duplicated product";
     String GLOBAL_EXCEPTION_RECIPE_NOT_FOUND = "Recipe not found";
