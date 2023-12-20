@@ -1,9 +1,8 @@
 package com.dstod.restaurantmanagerapi.management.controllers;
 
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
-import com.dstod.restaurantmanagerapi.management.models.dtos.BaseMenuInfoDto;
-import com.dstod.restaurantmanagerapi.management.models.dtos.CreateMenuRequest;
-import com.dstod.restaurantmanagerapi.management.models.dtos.CreateSectionResponse;
+import com.dstod.restaurantmanagerapi.management.models.dtos.*;
+import com.dstod.restaurantmanagerapi.management.services.MenuItemService;
 import com.dstod.restaurantmanagerapi.management.services.MenuService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +18,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class MenuController {
 
     private final MenuService menuService;
+    private final MenuItemService menuItemService;
 
-    public MenuController(MenuService menuService) {
+    public MenuController(MenuService menuService, MenuItemService menuItemService) {
         this.menuService = menuService;
+        this.menuItemService = menuItemService;
     }
 
     @PostMapping
@@ -33,5 +34,12 @@ public class MenuController {
         return ResponseEntity.created(uriComponents.toUri()).body(successResponse);
     }
 
+    @PostMapping("/item")
+    public ResponseEntity<SuccessResponse> createMenuItem(@Valid @RequestBody CreateMenuItemRequest request, UriComponentsBuilder uri) {
+        SuccessResponse successResponse = menuItemService.createMenuItem(request);
+        CreateMenuItemResponse createMenuItemResponse = (CreateMenuItemResponse) successResponse.savedObject();
 
+        UriComponents uriComponents = uri.path("/menu/item/{id}").buildAndExpand(createMenuItemResponse.id());
+        return ResponseEntity.created(uriComponents.toUri()).body(successResponse);
+    }
 }

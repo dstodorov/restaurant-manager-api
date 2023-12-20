@@ -78,7 +78,7 @@ public class MenuItemService {
                         menuItem.getMenu().getMenuType().name(),
                         menuItem.getMenu().getRevision(),
                         menuItem.getMenu().getLastUpdate(),
-                        menuItem.getAdditionalInformation()
+                        menuItem.getMenu().getUpdate_comments()
                 ),
                 Optional.ofNullable(menuItem.getProduct())
                         .map(product -> new ProductInfoDto(product.getId(), product.getName()))
@@ -93,6 +93,7 @@ public class MenuItemService {
         return new MenuItem(
                 0L,
                 request.price(),
+                request.additionalInformation(),
                 menu,
                 recipe,
                 product

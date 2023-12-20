@@ -34,9 +34,10 @@ public class MenuItem {
     public MenuItem() {
     }
 
-    public MenuItem(long id, BigDecimal price, Menu menu, Recipe recipe, Product product) {
+    public MenuItem(long id, BigDecimal price, String additionalInformation, Menu menu, Recipe recipe, Product product) {
         this.id = id;
         this.price = price;
+        this.additionalInformation = additionalInformation;
         this.menu = menu;
         this.recipe = recipe;
         this.product = product;
