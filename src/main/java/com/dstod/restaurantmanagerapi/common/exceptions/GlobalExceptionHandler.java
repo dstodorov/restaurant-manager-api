@@ -98,6 +98,8 @@ public class GlobalExceptionHandler {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_FLOOR_DUPLICATION, HttpStatus.CONFLICT);
         } else if (exception instanceof MenuTypeNotExistException) {
             return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_MENU_DETAILS_ERROR, HttpStatus.UNPROCESSABLE_ENTITY);
+        } else if (exception instanceof InvalidMenuItemInputException) {
+            return new ErrorDetails("Missing details", HttpStatus.BAD_REQUEST);
         }
         return new ErrorDetails(ApplicationMessages.GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }

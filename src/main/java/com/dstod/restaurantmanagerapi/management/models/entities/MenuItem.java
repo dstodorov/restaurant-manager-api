@@ -86,4 +86,13 @@ public class MenuItem {
         this.product = product;
         return this;
     }
+
+    public String getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public MenuItem setAdditionalInformation(String additionalInformation) {
+        this.additionalInformation = additionalInformation;
+        return this;
+    }
 }

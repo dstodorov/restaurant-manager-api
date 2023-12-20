@@ -32,4 +32,6 @@ public class MenuController {
         UriComponents uriComponents = uri.path("/menu/{id}").buildAndExpand(baseMenuInfoDto.id());
         return ResponseEntity.created(uriComponents.toUri()).body(successResponse);
     }
+
+
 }
