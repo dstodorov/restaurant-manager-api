@@ -2,24 +2,28 @@ package com.dstod.restaurantmanagerapi.management.services;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.management.MenuTypeNotExistException;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
-import com.dstod.restaurantmanagerapi.management.models.dtos.BaseMenuInfoDto;
-import com.dstod.restaurantmanagerapi.management.models.dtos.CreateMenuRequest;
+import com.dstod.restaurantmanagerapi.inventory.models.entities.Recipe;
+import com.dstod.restaurantmanagerapi.management.models.dtos.*;
 import com.dstod.restaurantmanagerapi.management.models.entities.Menu;
 import com.dstod.restaurantmanagerapi.management.models.enums.MenuType;
 import com.dstod.restaurantmanagerapi.management.repositories.MenuRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.NOT_AVAILABLE;
 
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
+    private final MenuItemService menuItemService;
 
-    public MenuService(MenuRepository menuRepository) {
+    public MenuService(MenuRepository menuRepository, MenuItemService menuItemService) {
         this.menuRepository = menuRepository;
+        this.menuItemService = menuItemService;
     }
 
     public SuccessResponse createMenu(CreateMenuRequest request) {
@@ -32,6 +36,25 @@ public class MenuService {
         BaseMenuInfoDto baseMenuInfoDto = mapToBaseMenuInfoDto(savedMenu);
 
         return new SuccessResponse("Successfully created menu", new Date(), baseMenuInfoDto);
+    }
+
+    public MenuDto getMenu() {
+        List<Menu> menus = this.menuRepository.findByMenuTypeIn(Arrays.stream(MenuType.values()).toList());
+        List<MenuItemCategoryDto> menuItemCategories = new ArrayList<>();
+        menus.forEach(m -> {
+            MenuItemCategoryDto menuItemCategoryDto = new MenuItemCategoryDto(m.getMenuType().name(), new ArrayList<>());
+            m.getMenuItems().forEach(i -> {
+                if (i.getRecipe() != null) {
+                    menuItemCategoryDto.items().add(new MenuItemDto(i.getRecipe().getName(), i.getPrice(), i.getAdditionalInformation()));
+                }
+                if (i.getProduct() != null) {
+                    menuItemCategoryDto.items().add(new MenuItemDto(i.getProduct().getName(), i.getPrice(), i.getAdditionalInformation()));
+                }
+            });
+            menuItemCategories.add(menuItemCategoryDto);
+        });
+
+        return new MenuDto(menuItemCategories);
     }
 
     private static void validateMenuType(String menuType) {
