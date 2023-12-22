@@ -18,7 +18,7 @@ public class Menu {
     @Enumerated(EnumType.STRING)
     MenuType menuType;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MenuItem> menuItems = new ArrayList<>();
 
     @Column(nullable = false)

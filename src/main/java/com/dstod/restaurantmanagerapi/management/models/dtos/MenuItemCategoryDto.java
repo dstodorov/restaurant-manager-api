@@ -3,7 +3,7 @@ package com.dstod.restaurantmanagerapi.management.models.dtos;
 import java.util.List;
 
 public record MenuItemCategoryDto(
-        String name,
+        String category,
         List<MenuItemDto> items
 ) {
 }
