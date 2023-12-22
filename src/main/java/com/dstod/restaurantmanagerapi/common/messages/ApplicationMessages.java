@@ -44,6 +44,8 @@ public interface ApplicationMessages {
     String SECTION_DUPLICATION = "Section with name %s already exists";
     String SECTION_SUCCESSFULLY_UPDATED = "Successfully updated section";
     String SECTION_SUCCESSFULLY_CREATED = "Successfully created section";
+    String MENU_SUCCESSFULLY_CREATED = "Successfully created menu";
+    String MENU_TYPE_NOT_VALID = "Menu type %s is not valid";
     String TABLE_NOT_FOUND = "Table with id %d was not found";
     String MENU_ITEM_SUCCESSFULLY_CREATED = "Successfully created menu item";
     String MENU_NOT_FOUND = "Menu with id %d was not found";

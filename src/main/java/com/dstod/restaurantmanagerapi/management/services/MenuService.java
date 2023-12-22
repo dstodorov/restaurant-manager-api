@@ -2,7 +2,6 @@ package com.dstod.restaurantmanagerapi.management.services;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.management.MenuTypeNotExistException;
 import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
-import com.dstod.restaurantmanagerapi.inventory.models.entities.Recipe;
 import com.dstod.restaurantmanagerapi.management.models.dtos.*;
 import com.dstod.restaurantmanagerapi.management.models.entities.Menu;
 import com.dstod.restaurantmanagerapi.management.models.enums.MenuType;
@@ -14,16 +13,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.NOT_AVAILABLE;
+import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.*;
 
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuItemService menuItemService;
 
-    public MenuService(MenuRepository menuRepository, MenuItemService menuItemService) {
+    public MenuService(MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
-        this.menuItemService = menuItemService;
     }
 
     public SuccessResponse createMenu(CreateMenuRequest request) {
@@ -35,7 +32,7 @@ public class MenuService {
 
         BaseMenuInfoDto baseMenuInfoDto = mapToBaseMenuInfoDto(savedMenu);
 
-        return new SuccessResponse("Successfully created menu", new Date(), baseMenuInfoDto);
+        return new SuccessResponse(MENU_SUCCESSFULLY_CREATED, new Date(), baseMenuInfoDto);
     }
 
     public MenuDto getMenu() {
@@ -59,7 +56,7 @@ public class MenuService {
 
     private static void validateMenuType(String menuType) {
         if (!MenuType.isValidMenuType(menuType)) {
-            throw new MenuTypeNotExistException(String.format("Menu type %s is not valid", menuType));
+            throw new MenuTypeNotExistException(String.format(MENU_TYPE_NOT_VALID, menuType));
         }
     }
 
