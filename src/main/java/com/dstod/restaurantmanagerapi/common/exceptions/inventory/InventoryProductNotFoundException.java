@@ -1,11 +1,13 @@
 package com.dstod.restaurantmanagerapi.common.exceptions.inventory;
 
+import com.dstod.restaurantmanagerapi.common.exceptions.RMException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Inventory product was not found.")
-public class InventoryProductNotFoundException extends RuntimeException {
-    public InventoryProductNotFoundException(String id) {
-        super(id);
+import static com.dstod.restaurantmanagerapi.common.messages.ApplicationMessages.GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT;
+
+public class InventoryProductNotFoundException extends RMException {
+    public InventoryProductNotFoundException(String message) {
+        super(message, GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT, HttpStatus.NOT_FOUND);
     }
 }

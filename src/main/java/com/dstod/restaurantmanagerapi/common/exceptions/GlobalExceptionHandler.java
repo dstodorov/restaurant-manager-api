@@ -27,6 +27,11 @@ public class GlobalExceptionHandler {
         return handleException(exception);
     }
 
+    @ExceptionHandler(RMException.class)
+    public ResponseEntity<FailureResponse> handleRMException(RMException exception) {
+        return handleException(exception);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<FailureResponse> handleValidationException(MethodArgumentNotValidException ex) {
@@ -46,6 +51,14 @@ public class GlobalExceptionHandler {
     private ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
         List<String> errors = new ArrayList<>();
 
+        errors.add(exception.getMessage());
+
+        return new ResponseEntity<>(new FailureResponse(GLOBAL_EXCEPTION_UNEXPECTED_ERROR, new Date(), errors), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<FailureResponse> handleException(RMException exception) {
+        List<String> errors = new ArrayList<>();
+
         if (exception instanceof ProductNotFoundException) {
             List<Long> missingProducts = ((ProductNotFoundException) exception).getMissingProducts();
             missingProducts.forEach(p -> errors.add(String.format(PRODUCT_NOT_FOUND, p)));
@@ -60,49 +73,6 @@ public class GlobalExceptionHandler {
             errors.add(exception.getMessage());
         }
 
-        ErrorDetails errorDetails = getErrorDetails(exception);
-
-        return new ResponseEntity<>(new FailureResponse(errorDetails.message(), new Date(), errors), errorDetails.status());
-    }
-
-    private ErrorDetails getErrorDetails(RuntimeException exception) {
-        if (exception instanceof ProductNotFoundException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else if (exception instanceof DuplicatedProductException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_DUPLICATED_PRODUCT, HttpStatus.CONFLICT);
-        } else if (exception instanceof ProductUnitNotFoundException || exception instanceof ProductCategoryNotFoundException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_PRODUCT_DETAILS_ERROR, HttpStatus.UNPROCESSABLE_ENTITY);
-        } else if (exception instanceof SupplierNotFoundException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_SUPPLIER_NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else if (exception instanceof DuplicatedSupplierDetailsException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_DUPLICATED_SUPPLIER, HttpStatus.CONFLICT);
-        } else if (exception instanceof MismatchedObjectIdException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_MISMATCH_ID, HttpStatus.CONFLICT);
-        } else if (exception instanceof RecipeCategoryNotFoundException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_RECIPE_DETAILS_ERROR, HttpStatus.CONFLICT);
-        } else if (exception instanceof RecipeNotFoundException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_RECIPE_NOT_FOUND, HttpStatus.CONFLICT);
-        } else if (exception instanceof RecipeProductDuplicationException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_DUPLICATED_RECIPE_PRODUCT, HttpStatus.CONFLICT);
-        } else if (exception instanceof InventoryStockIssuesException) {
-            return new ErrorDetails(exception.getMessage(), HttpStatus.BAD_REQUEST);
-        } else if (exception instanceof InventoryProductNotFoundException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_MISSING_INVENTORY_PRODUCT, HttpStatus.NOT_FOUND);
-        } else if (exception instanceof SectionDoesNotExistException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_MISSING_SECTION, HttpStatus.NOT_FOUND);
-        } else if (exception instanceof TableNotFoundException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_TABLE_NOT_FOUND, HttpStatus.NOT_FOUND);
-        } else if (exception instanceof SectionDuplicationException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_SECTION_DUPLICATION, HttpStatus.CONFLICT);
-        } else if (exception instanceof FloorDoesNotExistException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_MISSING_FLOOR, HttpStatus.NOT_FOUND);
-        } else if (exception instanceof FloorDuplicationException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_FLOOR_DUPLICATION, HttpStatus.CONFLICT);
-        } else if (exception instanceof MenuTypeNotExistException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_MENU_DETAILS_ERROR, HttpStatus.UNPROCESSABLE_ENTITY);
-        } else if (exception instanceof InvalidMenuItemInputException) {
-            return new ErrorDetails(GLOBAL_EXCEPTION_MISSING_MENU_ITEM_DETAILS, HttpStatus.BAD_REQUEST);
-        }
-        return new ErrorDetails(GLOBAL_EXCEPTION_UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new FailureResponse(exception.getGlobalMessage(), new Date(), errors), exception.getStatus());
     }
 }
