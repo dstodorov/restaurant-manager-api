@@ -2,8 +2,6 @@ package com.dstod.restaurantmanagerapi.common.exceptions;
 
 import com.dstod.restaurantmanagerapi.common.exceptions.auth.RefreshTokenFailureException;
 import com.dstod.restaurantmanagerapi.common.exceptions.inventory.*;
-import com.dstod.restaurantmanagerapi.common.exceptions.management.*;
-import com.dstod.restaurantmanagerapi.common.models.ErrorDetails;
 import com.dstod.restaurantmanagerapi.common.models.FailureResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +31,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<FailureResponse> handleValidationException(MethodArgumentNotValidException ex) {
         List<String> errors = new ArrayList<>();
         errors.add(Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage());
@@ -41,7 +38,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RefreshTokenFailureException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<FailureResponse> handleRefreshTokenFailureException(RefreshTokenFailureException e) {
         ArrayList<String> errors = new ArrayList<>();
         errors.add(e.getMessage());
@@ -50,9 +46,7 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<FailureResponse> handleException(RuntimeException exception) {
         List<String> errors = new ArrayList<>();
-
         errors.add(exception.getMessage());
-
         return new ResponseEntity<>(new FailureResponse(GLOBAL_EXCEPTION_UNEXPECTED_ERROR, new Date(), errors), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
