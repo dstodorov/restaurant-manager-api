@@ -12,6 +12,11 @@
 ### Current Project Components
  - User Authentication
  - Inventory Management
+ - Management Operations
+ - Reservation
+ - Cooking
+ - Waitressing
+ - Common Operations
  - ...
 ### **User Services:**
 **Supported user roles**:
