@@ -1,40 +1,21 @@
 package com.dstod.restaurantmanagerapi.reservation.services;
 
-import com.dstod.restaurantmanagerapi.common.models.SuccessResponse;
+import com.dstod.restaurantmanagerapi.reservation.models.dtos.ReservationRequest;
 import com.dstod.restaurantmanagerapi.reservation.repositories.ReservationRepository;
 
-public class ReservationService {
-    private final ReservationRepository reservationRepository;
+public interface ReservationService {
 
-    public ReservationService(ReservationRepository reservationRepository) {
-        this.reservationRepository = reservationRepository;
-    }
+    void newReservation(ReservationRequest request);
 
-    public void newReservation() {
+    void confirmReservation();
 
-    }
+    void modifyReservation();
 
-    public void confirmReservation() {
+    void cancelReservation();
 
-    }
+    void generateReport();
 
-    public void modifyReservation() {
+    void addToWaitList();
 
-    }
-
-    public void cancelReservation() {
-
-    }
-
-    public void generateReport() {
-
-    }
-
-    public void addToWaitList() {
-
-    }
-
-    public void tableAvailability() {
-
-    }
+    void tableAvailability();
 }

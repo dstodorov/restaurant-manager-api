@@ -28,7 +28,7 @@ public class Reservation {
     private List<RTable> tables;
     @Column(name = "confirmation_date")
     private LocalDateTime confirmationDate;
-    @Column(name = "reservation_code", unique = true, nullable = false)
+    @Column(name = "reservation_code", unique = true)
     private String reservationCode;
     @Enumerated(EnumType.STRING)
     @Column(name = "reservation_status")
