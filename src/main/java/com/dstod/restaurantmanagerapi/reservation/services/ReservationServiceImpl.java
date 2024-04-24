@@ -1,6 +1,10 @@
 package com.dstod.restaurantmanagerapi.reservation.services;
 
+import com.dstod.restaurantmanagerapi.common.exceptions.reservation.InvalidReservationPersonTypeException;
 import com.dstod.restaurantmanagerapi.reservation.models.dtos.ReservationRequest;
+import com.dstod.restaurantmanagerapi.reservation.models.entities.Reservation;
+import com.dstod.restaurantmanagerapi.reservation.models.enums.ReservationPersonType;
+import com.dstod.restaurantmanagerapi.reservation.models.enums.ReservationStatus;
 import com.dstod.restaurantmanagerapi.reservation.repositories.ReservationRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +18,20 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void newReservation(ReservationRequest request) {
-        // check reservation person
-        // check table/tables availability
-        // change table status
-        // change reservation status
-        // generate reservation code
-        // create reservation object
+
+        if (!ReservationPersonType.isValidType(request.reservationPersonType())) {
+            throw new InvalidReservationPersonTypeException(request.reservationPersonType());
+        }
+        Reservation reservation = new Reservation()
+                .setClientName(request.clientName())
+                .setClientPhoneNumber(request.clientPhoneNumber())
+                .setDate(request.date())
+                //TODO .setReservationPersonType();
+                .setAdditionalInformation(request.additionalInformation())
+                //TODO .setTables()
+                .setReservationStatus(ReservationStatus.PENDING)
+                //TODO .setReservationCode();
+        ;
     }
 
     @Override
